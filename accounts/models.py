@@ -11,5 +11,13 @@ class User(AbstractUser):
     role = models.CharField(max_length=10, choices=Role.choices, default=Role.CUSTOMER)
     phone = models.CharField(max_length=20, blank=True)
 
+    @property
+    def is_seller(self):
+        return self.role == self.Role.SELLER
+
+    @property
+    def is_customer(self):
+        return self.role == self.Role.CUSTOMER
+
     def __str__(self):
         return f"{self.username} ({self.role})"
