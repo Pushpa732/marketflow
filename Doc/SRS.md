@@ -85,3 +85,22 @@ PostgreSQL (production), Git and GitHub.
 | FR-AI1 | The system shall allow sellers to generate a draft product description using AI, which the seller may edit before saving. |
 | FR-AI2 | The system shall help customers discover products and shops by interest, using keyword search first and AI-assisted interpretation as an optional enhancement. |
 | FR-AI3 | All core system functions shall continue to work if the AI service is unavailable. |
+
+## 4. Non-Functional Requirements
+
+| ID | Category | Requirement |
+|---|---|---|
+| NFR-1 | Security | The system shall store passwords using Django's secure password hashing and shall never store payment PINs or card credentials. |
+| NFR-2 | Security | The system shall enforce role-based access control on the server side, not only in the user interface. |
+| NFR-3 | Security | The system shall use CSRF protection on all forms and shall keep secret keys in environment variables. |
+| NFR-4 | Performance | Common pages, such as the home page, search results, and product pages, shall load within 3 seconds under normal usage. |
+| NFR-5 | Performance | Product lists and order lists shall use pagination to avoid loading large amounts of data at once. |
+| NFR-6 | Usability | The interface shall be responsive and usable on mobile phones, tablets, and desktop computers. |
+| NFR-7 | Usability | The system shall display clear error and success messages for user actions. |
+| NFR-8 | Reliability | Order creation shall use database transactions so that an order is either fully saved or not saved at all. |
+| NFR-9 | Reliability | The system shall continue to work normally if the AI service is unavailable. |
+| NFR-10 | Data Integrity | The system shall calculate prices, stock, delivery charges, and totals on the server, and shall store the product price at the time of purchase in each order item. |
+| NFR-11 | Maintainability | The system shall be organized into separate Django apps, each with one clear responsibility. |
+| NFR-12 | Maintainability | The source code shall be managed with Git and documented in a README file. |
+| NFR-13 | Testability | Each major function shall have at least one documented test case. |
+| NFR-14 | Portability | The system shall run on Windows and Linux and shall be deployable with PostgreSQL. |
