@@ -4,5 +4,29 @@
 
 {% block content %}
 <h2>Seller Dashboard</h2>
-<p class="lead">Welcome, {{ user.username }}. Your shop tools will appear here.</p>
+
+{% if shop %}
+  <div class="card mt-3">
+    <div class="card-body d-flex align-items-center">
+      {% if shop.logo %}
+        <img src="{{ shop.logo.url }}" alt="Shop logo" class="me-3 rounded" style="width:72px;height:72px;object-fit:cover;">
+      {% endif %}
+      <div>
+        <h5 class="card-title mb-1">{{ shop.name }}</h5>
+        <p class="mb-1 text-muted">{{ shop.category }}</p>
+        {% if shop.is_published %}
+          <span class="badge bg-success">Published</span>
+        {% else %}
+          <span class="badge bg-secondary">Draft</span>
+        {% endif %}
+      </div>
+      <a href="{% url 'shops:shop_profile' %}" class="btn btn-outline-primary ms-auto">Edit shop</a>
+    </div>
+  </div>
+{% else %}
+  <div class="alert alert-info mt-3">
+    You have not created your shop yet.
+    <a href="{% url 'shops:shop_profile' %}" class="alert-link">Create your shop</a>
+  </div>
+{% endif %}
 {% endblock %}
