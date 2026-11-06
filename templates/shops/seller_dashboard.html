@@ -22,6 +22,16 @@
       </div>
       <a href="{% url 'shops:shop_profile' %}" class="btn btn-outline-primary ms-auto">Edit shop</a>
     </div>
+    <div class="card-footer">
+      <form method="post" action="{% url 'shops:toggle_publish' %}">
+        {% csrf_token %}
+        {% if shop.is_published %}
+          <button type="submit" class="btn btn-warning btn-sm">Unpublish shop</button>
+        {% else %}
+          <button type="submit" class="btn btn-success btn-sm">Publish shop</button>
+        {% endif %}
+      </form>
+    </div>
   </div>
 {% else %}
   <div class="alert alert-info mt-3">

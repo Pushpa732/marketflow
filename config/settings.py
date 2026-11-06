@@ -127,3 +127,7 @@ MEDIA_ROOT = BASE_DIR / "media"
 LOGIN_URL = "accounts:login"
 LOGIN_REDIRECT_URL = "marketplace:home"
 LOGOUT_REDIRECT_URL = "marketplace:home"
+
+from django.contrib.messages import constants as messages_constants
+
+MESSAGE_TAGS = {messages_constants.ERROR: "danger"}
