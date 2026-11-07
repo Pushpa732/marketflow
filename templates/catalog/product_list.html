@@ -13,16 +13,27 @@
     <table class="table table-striped align-middle">
       <thead>
         <tr>
+          <th>Image</th>
           <th>Name</th>
           <th>Category</th>
           <th>Price</th>
           <th>Stock</th>
           <th>Status</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
         {% for product in page_obj %}
           <tr>
+            <td>
+              {% with img=product.main_image %}
+                {% if img %}
+                  <img src="{{ img.image.url }}" alt="" class="rounded" style="width:48px;height:48px;object-fit:cover;">
+                {% else %}
+                  <span class="text-muted small">No image</span>
+                {% endif %}
+              {% endwith %}
+            </td>
             <td>{{ product.name }}</td>
             <td>{{ product.category|default:"-" }}</td>
             <td>৳ {{ product.price }}</td>
@@ -38,6 +49,11 @@
               {% else %}
                 <span class="badge bg-secondary">Draft</span>
               {% endif %}
+            </td>
+            <td>
+              <a href="{% url 'catalog:product_images' product.pk %}" class="btn btn-outline-secondary btn-sm">Images</a>
+              <a href="{% url 'catalog:product_edit' product.pk %}" class="btn btn-outline-primary btn-sm">Edit</a>
+              <a href="{% url 'catalog:product_delete' product.pk %}" class="btn btn-outline-danger btn-sm">Delete</a>
             </td>
           </tr>
         {% endfor %}

@@ -14,3 +14,18 @@
 | TC-10 | Publish without description | FR-S2 | Click Publish on a shop with no description | Error message, shop stays Draft | As expected | Pass |
 | TC-11 | Publish shop | FR-S2 | Click Publish on a complete shop | Shop appears on the home page | As expected | Pass |
 | TC-12 | Unpublish shop | FR-S2 | Click Unpublish | Shop disappears from the home page | As expected | Pass |
+
+## Phase 3: Catalog (Products and Images)
+
+| ID | Scenario | Related Req. | Steps | Expected Result | Actual Result | Status |
+|---|---|---|---|---|---|---|
+| TC-13 | Seller adds a product | FR-S3 | Open Add product, fill the form, save | Product saved under the seller's own shop | As expected | Pass |
+| TC-14 | Price of zero | NFR-10 | Add a product with price 0 | Error shown, nothing saved | As expected | Pass |
+| TC-15 | Seller edits own product | FR-S3 | Click Edit, change the price, save | New price saved and shown in list | As expected | Pass |
+| TC-16 | Seller deletes own product | FR-S3 | Click Delete, then confirm | Confirmation page first, then product removed | As expected | Pass |
+| TC-17 | Edit another seller's product | FR-S13 | Open another seller's product edit address | 404 Not Found, data unchanged | As expected | Pass |
+| TC-18 | Customer opens product pages | NFR-2 | Log in as customer, open /seller/products/ | Access Denied (403) | As expected | Pass |
+| TC-19 | Upload a valid image | FR-S4 | Open Images, upload a JPG or PNG | Image saved and shown as Main | As expected | Pass |
+| TC-20 | Upload a non-image file | FR-S4 | Upload a .txt file | Error shown, nothing saved | As expected | Pass |
+| TC-21 | Upload more than 5 images | FR-S4 | Upload a 6th image | Upload blocked with a message | As expected | Pass |
+| TC-22 | Low-stock alert | FR-S11 | Add a product with stock below its alert level | Red "Low stock" badge in the list | As expected | Pass |

@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 
-{% block title %}Add Product | MarketFlow{% endblock %}
+{% block title %}{% if product %}Edit{% else %}Add{% endif %} Product | MarketFlow{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
   <div class="col-md-8 col-lg-6">
-    <h2 class="mb-4">Add product</h2>
+    <h2 class="mb-4">{% if product %}Edit product{% else %}Add product{% endif %}</h2>
 
     <form method="post" novalidate>
       {% csrf_token %}
