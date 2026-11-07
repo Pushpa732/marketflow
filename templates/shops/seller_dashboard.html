@@ -22,7 +22,8 @@
       </div>
       <a href="{% url 'shops:shop_profile' %}" class="btn btn-outline-primary ms-auto">Edit shop</a>
     </div>
-    <div class="card-footer">
+        <div class="card-footer d-flex gap-2">
+      <a href="{% url 'catalog:product_list' %}" class="btn btn-primary btn-sm">Manage products</a>
       <form method="post" action="{% url 'shops:toggle_publish' %}">
         {% csrf_token %}
         {% if shop.is_published %}
