@@ -29,3 +29,18 @@
 | TC-20 | Upload a non-image file | FR-S4 | Upload a .txt file | Error shown, nothing saved | As expected | Pass |
 | TC-21 | Upload more than 5 images | FR-S4 | Upload a 6th image | Upload blocked with a message | As expected | Pass |
 | TC-22 | Low-stock alert | FR-S11 | Add a product with stock below its alert level | Red "Low stock" badge in the list | As expected | Pass |
+
+## Phase 3: CSV Import
+
+| ID | Scenario | Related Req. | Steps | Expected Result | Actual Result | Status |
+|---|---|---|---|---|---|---|
+| TC-23 | Download CSV template | FR-S5 | Open Import CSV, click Download CSV template | File with header and two example rows downloads | As expected | Pass |
+| TC-24 | Import a valid CSV | FR-S5 | Upload a correct file | Products saved as drafts in the seller's own shop, success message | As expected | Pass |
+| TC-25 | Upload a non-CSV file | FR-S5 | Upload a .txt or .jpg file | Error: only .csv files accepted | As expected | Pass |
+| TC-26 | Missing required column | FR-S5 | Upload a file without the price column | Error naming the missing column | As expected | Pass |
+| TC-27 | Invalid values in rows | FR-S5, NFR-10 | Upload rows with a bad price, bad stock, or empty name | Report listing each problem per row | As expected | Pass |
+| TC-28 | Unknown category | FR-S5 | Upload a row with a category that does not exist | Row error naming the category | As expected | Pass |
+| TC-29 | One bad row | FR-S5, NFR-8 | Upload a file with one good and one bad row | Nothing imported (all-or-nothing) | As expected | Pass |
+| TC-30 | Duplicate product name | FR-S5 | Upload the same valid file twice | Second upload rejected, no duplicates | As expected | Pass |
+| TC-31 | Import goes to own shop only | FR-S13 | Import as seller2, check seller1's products | Products appear only in seller2's shop | As expected | Pass |
+| TC-32 | Customer opens import page | NFR-2 | Log in as customer, open /seller/products/import/ | Access Denied (403) | As expected | Pass |
