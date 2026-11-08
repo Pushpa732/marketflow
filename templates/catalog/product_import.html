@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Import Products | MarketFlow{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <h2 class="mb-3">Import products from CSV</h2>
+
+    <div class="card mb-4">
+      <div class="card-body">
+        <p class="mb-2"><strong>How it works</strong></p>
+        <ol>
+          <li>Download the template and open it in Excel or Google Sheets.</li>
+          <li>Replace the example rows with your own products, then save as <strong>CSV</strong>.</li>
+          <li>Upload the file below.</li>
+        </ol>
+        <p class="mb-2">
+          <strong>Required columns:</strong> name, price, stock.<br>
+          <strong>Optional columns:</strong> category (must match an existing category name), description,
+          low_stock_threshold, is_published (yes or no).
+        </p>
+        <a href="{% url 'catalog:product_import_template' %}" class="btn btn-outline-primary btn-sm">Download CSV template</a>
+      </div>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" novalidate class="mb-4">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label class="form-label" for="{{ form.file.id_for_label }}">{{ form.file.label }}</label>
+        {{ form.file }}
+        {% for error in form.file.errors %}
+          <div class="text-danger small mt-1">{{ error }}</div>
+        {% endfor %}
+      </div>
+      <button type="submit" class="btn btn-primary">Check file</button>
+      <a href="{% url 'catalog:product_list' %}" class="btn btn-outline-secondary">Back to products</a>
+    </form>
+
+    {% if preview %}
+      <div class="alert alert-success">
+        The file looks good: <strong>{{ preview.total }}</strong> product row{{ preview.total|pluralize }} found.
+        Showing the first {{ preview.rows|length }}.
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-sm table-striped">
+          <thead>
+            <tr>
+              <th>Row</th>
+              <th>Name</th>
+              <th>Category</th>
+              <th>Price</th>
+              <th>Stock</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for number, row in preview.rows %}
+              <tr>
+                <td>{{ number }}</td>
+                <td>{{ row.name }}</td>
+                <td>{{ row.category }}</td>
+                <td>{{ row.price }}</td>
+                <td>{{ row.stock }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <p class="text-muted">Nothing has been saved yet. The Import button arrives on Day 21.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

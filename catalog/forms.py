@@ -52,3 +52,13 @@ class ProductImageForm(forms.ModelForm):
                 f"The image is too large. The maximum size is {self.MAX_SIZE_MB} MB."
             )
         return image
+
+    
+
+class ProductImportForm(forms.Form):
+    file = forms.FileField(label="CSV file")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["file"].widget.attrs["class"] = "form-control"
+        self.fields["file"].widget.attrs["accept"] = ".csv"
