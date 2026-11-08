@@ -8,9 +8,9 @@ from accounts.decorators import seller_required
 from shops.models import Shop
 
 from .forms import ProductImportForm
-from .importers import ALL_COLUMNS, CSVFormatError, read_csv_rows
+from .importers import ALL_COLUMNS, CSVFormatError, import_products, read_csv_rows
 
-PREVIEW_ROWS = 5
+MAX_ERRORS_SHOWN = 50
 
 
 @seller_required
@@ -20,7 +20,8 @@ def product_import(request):
         messages.error(request, "Please create your shop before importing products.")
         return redirect("shops:shop_profile")
 
-    preview = None
+    import_errors = None
+    error_total = 0
 
     if request.method == "POST":
         form = ProductImportForm(request.POST, request.FILES)
@@ -30,11 +31,27 @@ def product_import(request):
             except CSVFormatError as error:
                 form.add_error("file", str(error))
             else:
-                preview = {"total": len(rows), "rows": rows[:PREVIEW_ROWS]}
+                count, errors = import_products(shop, rows)
+                if errors:
+                    error_total = len(errors)
+                    import_errors = errors[:MAX_ERRORS_SHOWN]
+                else:
+                    label = "product" if count == 1 else "products"
+                    messages.success(
+                        request,
+                        f"{count} {label} imported. Products not marked as published are saved as drafts.",
+                    )
+                    return redirect("catalog:product_list")
     else:
         form = ProductImportForm()
 
-    return render(request, "catalog/product_import.html", {"form": form, "preview": preview})
+    context = {
+        "form": form,
+        "import_errors": import_errors,
+        "error_total": error_total,
+        "hidden_errors": error_total - len(import_errors) if import_errors else 0,
+    }
+    return render(request, "catalog/product_import.html", context)
 
 
 @seller_required

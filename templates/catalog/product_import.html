@@ -20,6 +20,10 @@
           <strong>Optional columns:</strong> category (must match an existing category name), description,
           low_stock_threshold, is_published (yes or no).
         </p>
+        <p class="text-muted small mb-2">
+          If any row has a problem, nothing is imported. Fix the file and upload it again.
+          Add product images afterwards from each product's Images button.
+        </p>
         <a href="{% url 'catalog:product_import_template' %}" class="btn btn-outline-primary btn-sm">Download CSV template</a>
       </div>
     </div>
@@ -33,41 +37,32 @@
           <div class="text-danger small mt-1">{{ error }}</div>
         {% endfor %}
       </div>
-      <button type="submit" class="btn btn-primary">Check file</button>
+      <button type="submit" class="btn btn-primary">Import products</button>
       <a href="{% url 'catalog:product_list' %}" class="btn btn-outline-secondary">Back to products</a>
     </form>
 
-    {% if preview %}
-      <div class="alert alert-success">
-        The file looks good: <strong>{{ preview.total }}</strong> product row{{ preview.total|pluralize }} found.
-        Showing the first {{ preview.rows|length }}.
+    {% if import_errors %}
+      <div class="alert alert-danger">
+        <strong>Nothing was imported.</strong>
+        Problems were found in {{ error_total }} row{{ error_total|pluralize }}. Fix the file and upload it again.
       </div>
 
-      <div class="table-responsive">
-        <table class="table table-sm table-striped">
-          <thead>
-            <tr>
-              <th>Row</th>
-              <th>Name</th>
-              <th>Category</th>
-              <th>Price</th>
-              <th>Stock</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for number, row in preview.rows %}
-              <tr>
-                <td>{{ number }}</td>
-                <td>{{ row.name }}</td>
-                <td>{{ row.category }}</td>
-                <td>{{ row.price }}</td>
-                <td>{{ row.stock }}</td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-      <p class="text-muted">Nothing has been saved yet. The Import button arrives on Day 21.</p>
+      <ul class="list-group mb-3">
+        {% for number, row_errors in import_errors %}
+          <li class="list-group-item">
+            <strong>Row {{ number }}</strong>
+            <ul class="mb-0">
+              {% for message in row_errors %}
+                <li>{{ message }}</li>
+              {% endfor %}
+            </ul>
+          </li>
+        {% endfor %}
+      </ul>
+
+      {% if hidden_errors %}
+        <p class="text-muted">...and {{ hidden_errors }} more row{{ hidden_errors|pluralize }} with problems.</p>
+      {% endif %}
     {% endif %}
   </div>
 </div>
