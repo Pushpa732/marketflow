@@ -37,8 +37,10 @@ erDiagram
         string logo
         text description
         string category
-        string contact
+        string contact_phone
+        string contact_email
         boolean is_published
+        datetime created_at
     }
     CATEGORY {
         int id PK
@@ -51,16 +53,20 @@ erDiagram
         int shop_id FK
         int category_id FK
         string name
+        string slug
         text description
         decimal price
         int stock
+        int low_stock_threshold
         boolean is_published
         datetime created_at
+        datetime updated_at
     }
     PRODUCT_IMAGE {
         int id PK
         int product_id FK
         string image
+        datetime created_at
     }
     ADDRESS {
         int id PK
@@ -128,3 +134,13 @@ erDiagram
         datetime created_at
     }
 ```
+
+## Implementation Status
+
+| Entity | Status |
+|---|---|
+| User, Shop | Implemented |
+| Category, Product, ProductImage | Implemented |
+| Address, Cart, CartItem | Planned (Phase 5) |
+| Order, OrderItem, Payment, Delivery | Planned (Phases 5 and 6) |
+| Review | Planned (Phase 7) |
