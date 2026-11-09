@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.name }} | MarketFlow{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{% url 'marketplace:home' %}">Home</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'marketplace:shop_detail' product.shop.slug %}">{{ product.shop.name }}</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{{ product.name }}</li>
+  </ol>
+</nav>
+
+<div class="row g-4">
+  <div class="col-md-6">
+    {% with images=product.images.all %}
+      {% if images %}
+        <div id="productCarousel" class="carousel slide border rounded">
+          <div class="carousel-inner">
+            {% for image in images %}
+              <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                <img src="{{ image.image.url }}" class="d-block w-100" alt="{{ product.name }}" style="height:380px;object-fit:contain;">
+              </div>
+            {% endfor %}
+          </div>
+          {% if images|length > 1 %}
+            <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
+              <span class="carousel-control-prev-icon bg-dark rounded-circle p-3" aria-hidden="true"></span>
+              <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
+              <span class="carousel-control-next-icon bg-dark rounded-circle p-3" aria-hidden="true"></span>
+              <span class="visually-hidden">Next</span>
+            </button>
+          {% endif %}
+        </div>
+      {% else %}
+        <div class="bg-light border rounded d-flex align-items-center justify-content-center text-muted" style="height:380px;">
+          No image available
+        </div>
+      {% endif %}
+    {% endwith %}
+  </div>
+
+  <div class="col-md-6">
+    {% if product.category %}
+      <span class="badge bg-secondary mb-2">{{ product.category }}</span>
+    {% endif %}
+    <h1 class="h2">{{ product.name }}</h1>
+    <p class="display-6 fw-bold">৳ {{ product.price }}</p>
+
+    <p>
+      {% if product.stock == 0 %}
+        <span class="badge bg-danger">Out of stock</span>
+      {% elif product.is_low_stock %}
+        <span class="badge bg-warning text-dark">Only {{ product.stock }} left</span>
+      {% else %}
+        <span class="badge bg-success">In stock</span>
+      {% endif %}
+    </p>
+
+    {% if product.description %}
+      {{ product.description|linebreaks }}
+    {% endif %}
+
+    <div class="card my-3">
+      <div class="card-body">
+        <p class="mb-1">Sold by <a href="{% url 'marketplace:shop_detail' product.shop.slug %}">{{ product.shop.name }}</a></p>
+        <p class="small text-muted mb-0">
+          {% if product.shop.contact_phone %}Phone: {{ product.shop.contact_phone }}{% endif %}
+          {% if product.shop.contact_email %} &middot; Email: {{ product.shop.contact_email }}{% endif %}
+        </p>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" type="button" disabled>Add to cart (coming soon)</button>
+  </div>
+</div>
+
+{% if related %}
+  <h4 class="mt-5 mb-3">More from {{ product.shop.name }}</h4>
+  <div class="row g-3">
+    {% for item in related %}
+      <div class="col-6 col-md-3">
+        {% include "marketplace/_product_card.html" with product=item %}
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+{% endblock %}

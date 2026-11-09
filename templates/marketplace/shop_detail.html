@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}{{ shop.name }} | MarketFlow{% endblock %}
+
+{% block content %}
+<div class="card mb-4">
+  <div class="card-body d-flex align-items-center">
+    {% if shop.logo %}
+      <img src="{{ shop.logo.url }}" alt="{{ shop.name }} logo" class="me-3 rounded" style="width:96px;height:96px;object-fit:cover;">
+    {% endif %}
+    <div>
+      <h2 class="mb-1">{{ shop.name }}</h2>
+      {% if shop.category %}
+        <span class="badge bg-secondary">{{ shop.category }}</span>
+      {% endif %}
+      {% if shop.description %}
+        <p class="mt-2 mb-1">{{ shop.description }}</p>
+      {% endif %}
+      <p class="small text-muted mb-0">
+        {% if shop.contact_phone %}Phone: {{ shop.contact_phone }}{% endif %}
+        {% if shop.contact_email %} &middot; Email: {{ shop.contact_email }}{% endif %}
+      </p>
+    </div>
+  </div>
+</div>
+
+<h4 class="mb-3">Products</h4>
+
+{% if page_obj %}
+  <div class="row g-3">
+    {% for product in page_obj %}
+      <div class="col-6 col-md-4 col-lg-3">
+        {% include "marketplace/_product_card.html" %}
+      </div>
+    {% endfor %}
+  </div>
+  {% include "marketplace/_pagination.html" %}
+{% else %}
+  <p class="text-muted">This shop has no published products yet.</p>
+{% endif %}
+{% endblock %}

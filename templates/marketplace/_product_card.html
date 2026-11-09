@@ -1,0 +1,21 @@
+<div class="card h-100">
+  <a href="{% url 'marketplace:product_detail' product.slug %}">
+    {% with img=product.main_image %}
+      {% if img %}
+        <img src="{{ img.image.url }}" class="card-img-top" alt="{{ product.name }}" style="height:180px;object-fit:cover;">
+      {% else %}
+        <div class="bg-light text-muted d-flex align-items-center justify-content-center" style="height:180px;">No image</div>
+      {% endif %}
+    {% endwith %}
+  </a>
+  <div class="card-body">
+    <h6 class="card-title mb-1">
+      <a href="{% url 'marketplace:product_detail' product.slug %}" class="text-decoration-none text-dark">{{ product.name }}</a>
+    </h6>
+    <p class="mb-1 fw-bold">৳ {{ product.price }}</p>
+    <p class="small text-muted mb-1">{{ product.shop.name }}</p>
+    {% if not product.is_in_stock %}
+      <span class="badge bg-danger">Out of stock</span>
+    {% endif %}
+  </div>
+</div>

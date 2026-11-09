@@ -20,7 +20,9 @@
               <img src="{{ shop.logo.url }}" alt="{{ shop.name }} logo" class="me-3 rounded" style="width:64px;height:64px;object-fit:cover;">
             {% endif %}
             <div>
-              <h5 class="card-title mb-1">{{ shop.name }}</h5>
+              <h5 class="card-title mb-1">
+                <a href="{% url 'marketplace:shop_detail' shop.slug %}" class="stretched-link text-decoration-none">{{ shop.name }}</a>
+              </h5>
               <p class="text-muted mb-1">{{ shop.category }}</p>
               <p class="card-text small">{{ shop.description|truncatechars:80 }}</p>
             </div>
