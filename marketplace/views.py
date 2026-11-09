@@ -5,9 +5,32 @@ from catalog.models import Product
 from shops.models import Shop
 
 
+def _public_products():
+    """Products that customers may see: published product in a published shop."""
+    return (
+        Product.objects.filter(is_published=True, shop__is_published=True)
+        .select_related("shop", "category")
+        .prefetch_related("images")
+    )
+
+
 def home(request):
-    shops = Shop.objects.filter(is_published=True).order_by("-created_at")
-    return render(request, "marketplace/home.html", {"shops": shops})
+    context = {
+        "latest_products": _public_products()[:8],
+        "shops": Shop.objects.filter(is_published=True).order_by("-created_at")[:6],
+    }
+    return render(request, "marketplace/home.html", context)
+
+
+def product_list(request):
+    page_obj = Paginator(_public_products(), 12).get_page(request.GET.get("page"))
+    return render(request, "marketplace/product_list.html", {"page_obj": page_obj})
+
+
+def shop_list(request):
+    shops = Shop.objects.filter(is_published=True).order_by("name")
+    page_obj = Paginator(shops, 12).get_page(request.GET.get("page"))
+    return render(request, "marketplace/shop_list.html", {"page_obj": page_obj})
 
 
 def shop_detail(request, slug):

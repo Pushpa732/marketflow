@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}All Products | MarketFlow{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-end mb-3">
+  <h2 class="mb-0">All products</h2>
+  <span class="text-muted">{{ page_obj.paginator.count }} product{{ page_obj.paginator.count|pluralize }}</span>
+</div>
+
+{% if page_obj %}
+  <div class="row g-3">
+    {% for product in page_obj %}
+      <div class="col-6 col-md-4 col-lg-3">
+        {% include "marketplace/_product_card.html" %}
+      </div>
+    {% endfor %}
+  </div>
+  {% include "marketplace/_pagination.html" %}
+{% else %}
+  <div class="alert alert-info">No products are available yet.</div>
+{% endif %}
+{% endblock %}
