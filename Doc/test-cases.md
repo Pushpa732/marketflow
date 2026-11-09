@@ -44,3 +44,24 @@
 | TC-30 | Duplicate product name | FR-S5 | Upload the same valid file twice | Second upload rejected, no duplicates | As expected | Pass |
 | TC-31 | Import goes to own shop only | FR-S13 | Import as seller2, check seller1's products | Products appear only in seller2's shop | As expected | Pass |
 | TC-32 | Customer opens import page | NFR-2 | Log in as customer, open /seller/products/import/ | Access Denied (403) | As expected | Pass |
+
+
+## Phase 4: Marketplace and Search
+
+| ID | Scenario | Related Req. | Steps | Expected Result | Actual Result | Status |
+|---|---|---|---|---|---|---|
+| TC-33 | Browse without logging in | FR-C1 | Log out, open home, products, shops, a shop page, a product page | All pages open without login | As expected | Pass |
+| TC-34 | Draft product is hidden | FR-C13, NFR-2 | Open a draft product's address, search for its name | 404 page, never in listings or search | As expected | Pass |
+| TC-35 | Draft shop is hidden | FR-C13, NFR-2 | Open a draft shop's address, search for its name | 404 page, shop and its products never listed | As expected | Pass |
+| TC-36 | Keyword search | FR-C2 | Search "shirt" (and "SHIRT") | Matching products found, capital letters ignored | As expected | Pass |
+| TC-37 | Multi-word search | FR-C2 | Search "blue shirt" | Products containing all words found | As expected | Pass |
+| TC-38 | Search by shop or category | FR-C2 | Search a shop name, then a category name | Shop, its products, or category link shown | As expected | Pass |
+| TC-39 | Search with no result | FR-C2 | Search "zzzz" | Friendly "No results" message | As expected | Pass |
+| TC-40 | Unsafe search text | NFR-1, NFR-3 | Search `<script>alert(1)</script>` and `' OR 1=1 --` | Shown as plain text, no popup, no error | As expected | Pass |
+| TC-41 | Filter by category | FR-C3 | Choose a category and click Apply | Only products of that category | As expected | Pass |
+| TC-42 | Filter by price range | FR-C3 | Set min 400 and max 500 | Only products priced in that range | As expected | Pass |
+| TC-43 | Combined filters | FR-C3 | Combine category, shop, and price | Only products matching all filters | As expected | Pass |
+| TC-44 | Invalid filter input | NFR-7 | Minimum above maximum, text as price, unknown shop in address | Clear error message, no crash page | As expected | Pass |
+| TC-45 | Sorting | FR-C3 | Choose each sort option | Products in the correct order | As expected | Pass |
+| TC-46 | Pagination keeps choices | NFR-5 | Sort, then go to page 2 | Sort and filters stay on page 2 | As expected | Pass |
+| TC-47 | Friendly 404 page | NFR-7 | Open a page that does not exist (with DEBUG off) | Friendly 404 page with buttons | As expected | Pass |
