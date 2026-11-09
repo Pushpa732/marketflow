@@ -5,6 +5,8 @@ from django.shortcuts import get_object_or_404, render
 from catalog.models import Category, Product
 from shops.models import Shop
 
+from .forms import ProductFilterForm
+
 MAX_SEARCH_TERMS = 5
 
 
@@ -18,11 +20,19 @@ def _public_products():
 
 
 def _query_string(request):
-    """Current address parameters without 'page', so pagination keeps the search."""
+    """Current address parameters without 'page', so pagination keeps search and filters."""
     params = request.GET.copy()
     params.pop("page", None)
     encoded = params.urlencode()
     return encoded + "&" if encoded else ""
+
+
+def _apply_filters(request, products):
+    """Return (filtered_products, filter_form)."""
+    filter_form = ProductFilterForm(request.GET)
+    if filter_form.is_valid():
+        products = filter_form.filter_products(products)
+    return products, filter_form
 
 
 def home(request):
@@ -34,21 +44,15 @@ def home(request):
 
 
 def product_list(request):
-    products = _public_products()
+    products, filter_form = _apply_filters(request, _public_products())
 
-    category = None
-    category_slug = request.GET.get("category", "").strip()
-    if category_slug:
-        category = Category.objects.filter(slug=category_slug).first()
-        if category is None:
-            products = products.none()
-        else:
-            products = products.filter(Q(category=category) | Q(category__parent=category))
+    active_category = filter_form.cleaned_data.get("category") if filter_form.is_valid() else None
 
     page_obj = Paginator(products, 12).get_page(request.GET.get("page"))
     context = {
         "page_obj": page_obj,
-        "category": category,
+        "filter_form": filter_form,
+        "active_category": active_category,
         "query_string": _query_string(request),
     }
     return render(request, "marketplace/product_list.html", context)
@@ -91,6 +95,8 @@ def search(request):
             products__is_published=True, products__shop__is_published=True
         ).distinct()
 
+    products, filter_form = _apply_filters(request, products)
+
     page_obj = Paginator(products, 12).get_page(request.GET.get("page"))
     context = {
         "query": query,
@@ -98,6 +104,7 @@ def search(request):
         "total_products": page_obj.paginator.count,
         "shops": shops.order_by("name")[:6],
         "categories": categories[:8],
+        "filter_form": filter_form,
         "query_string": _query_string(request),
     }
     return render(request, "marketplace/search_results.html", context)

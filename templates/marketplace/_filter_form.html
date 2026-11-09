@@ -1,0 +1,41 @@
+<form method="get" action="{{ action_url }}" class="card card-body mb-4">
+  {% if query %}
+    <input type="hidden" name="q" value="{{ query }}">
+  {% endif %}
+
+  <div class="row g-2 align-items-end">
+    <div class="col-md-3">
+      <label class="form-label small mb-1" for="{{ filter_form.category.id_for_label }}">Category</label>
+      {{ filter_form.category }}
+    </div>
+    <div class="col-md-3">
+      <label class="form-label small mb-1" for="{{ filter_form.shop.id_for_label }}">Shop</label>
+      {{ filter_form.shop }}
+    </div>
+    <div class="col-6 col-md-2">
+      <label class="form-label small mb-1" for="{{ filter_form.min_price.id_for_label }}">Min price</label>
+      {{ filter_form.min_price }}
+    </div>
+    <div class="col-6 col-md-2">
+      <label class="form-label small mb-1" for="{{ filter_form.max_price.id_for_label }}">Max price</label>
+      {{ filter_form.max_price }}
+    </div>
+    <div class="col-md-2 d-flex gap-2">
+      <button type="submit" class="btn btn-primary w-100">Apply</button>
+      {% if query %}
+        <a href="{{ action_url }}?q={{ query|urlencode }}" class="btn btn-outline-secondary">Reset</a>
+      {% else %}
+        <a href="{{ action_url }}" class="btn btn-outline-secondary">Reset</a>
+      {% endif %}
+    </div>
+  </div>
+
+  {% for error in filter_form.non_field_errors %}
+    <div class="text-danger small mt-2">{{ error }}</div>
+  {% endfor %}
+  {% for field in filter_form %}
+    {% for error in field.errors %}
+      <div class="text-danger small mt-2">{{ field.label }}: {{ error }}</div>
+    {% endfor %}
+  {% endfor %}
+</form>
