@@ -1,12 +1,16 @@
 {% extends "base.html" %}
 
-{% block title %}All Products | MarketFlow{% endblock %}
+{% block title %}{% if category %}{{ category.name }}{% else %}All Products{% endif %} | MarketFlow{% endblock %}
 
 {% block content %}
 <div class="d-flex justify-content-between align-items-end mb-3">
-  <h2 class="mb-0">All products</h2>
+  <h2 class="mb-0">{% if category %}{{ category.name }}{% else %}All products{% endif %}</h2>
   <span class="text-muted">{{ page_obj.paginator.count }} product{{ page_obj.paginator.count|pluralize }}</span>
 </div>
+
+{% if category %}
+  <a href="{% url 'marketplace:product_list' %}" class="btn btn-outline-secondary btn-sm mb-3">Show all products</a>
+{% endif %}
 
 {% if page_obj %}
   <div class="row g-3">
@@ -18,6 +22,6 @@
   </div>
   {% include "marketplace/_pagination.html" %}
 {% else %}
-  <div class="alert alert-info">No products are available yet.</div>
+  <div class="alert alert-info">No products are available here yet.</div>
 {% endif %}
 {% endblock %}

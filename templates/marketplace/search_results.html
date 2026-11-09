@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Search | MarketFlow{% endblock %}
+
+{% block content %}
+<h2 class="mb-3">Search</h2>
+
+<form method="get" action="{% url 'marketplace:search' %}" class="mb-4">
+  <div class="input-group">
+    <input type="search" name="q" value="{{ query }}" class="form-control" placeholder="Search products, shops, or categories" maxlength="100">
+    <button class="btn btn-primary" type="submit">Search</button>
+  </div>
+</form>
+
+{% if not query %}
+  <p class="text-muted">Type a product, shop, or category name to start.</p>
+
+{% elif total_products or shops or categories %}
+  <p class="text-muted">Results for <strong>{{ query }}</strong></p>
+
+  {% if categories %}
+    <h5>Categories</h5>
+    <div class="mb-4">
+      {% for category in categories %}
+        <a href="{% url 'marketplace:product_list' %}?category={{ category.slug }}" class="btn btn-outline-secondary btn-sm me-1 mb-1">{{ category.name }}</a>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  {% if shops %}
+    <h5>Shops</h5>
+    <div class="row g-3 mb-4">
+      {% for shop in shops %}
+        <div class="col-sm-6 col-lg-4">
+          {% include "marketplace/_shop_card.html" %}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  {% if total_products %}
+    <h5>Products ({{ total_products }})</h5>
+    <div class="row g-3">
+      {% for product in page_obj %}
+        <div class="col-6 col-md-4 col-lg-3">
+          {% include "marketplace/_product_card.html" %}
+        </div>
+      {% endfor %}
+    </div>
+    {% include "marketplace/_pagination.html" %}
+  {% endif %}
+
+{% else %}
+  <div class="alert alert-info">
+    No results for <strong>{{ query }}</strong>. Try a shorter or different word, or
+    <a href="{% url 'marketplace:product_list' %}">browse all products</a>.
+  </div>
+{% endif %}
+{% endblock %}
