@@ -28,10 +28,11 @@ def _query_string(request):
 
 
 def _apply_filters(request, products):
-    """Return (filtered_products, filter_form)."""
+    """Return (filtered_and_sorted_products, filter_form)."""
     filter_form = ProductFilterForm(request.GET)
     if filter_form.is_valid():
         products = filter_form.filter_products(products)
+        products = filter_form.sort_products(products)
     return products, filter_form
 
 

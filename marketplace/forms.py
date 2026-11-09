@@ -4,6 +4,20 @@ from django.db.models import Q
 from catalog.models import Category
 from shops.models import Shop
 
+SORT_CHOICES = [
+    ("", "Newest first"),
+    ("price_low", "Price: low to high"),
+    ("price_high", "Price: high to low"),
+    ("name", "Name: A to Z"),
+]
+
+SORT_ORDERING = {
+    "": ("-created_at", "-id"),
+    "price_low": ("price", "id"),
+    "price_high": ("-price", "id"),
+    "name": ("name", "id"),
+}
+
 
 class ProductFilterForm(forms.Form):
     category = forms.ModelChoiceField(
@@ -24,6 +38,7 @@ class ProductFilterForm(forms.Form):
     max_price = forms.DecimalField(
         min_value=0, max_digits=10, decimal_places=2, required=False, label="Max price"
     )
+    sort = forms.ChoiceField(choices=SORT_CHOICES, required=False, label="Sort by")
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -38,6 +53,9 @@ class ProductFilterForm(forms.Form):
 
         self.fields["category"].widget.attrs["class"] = "form-select"
         self.fields["shop"].widget.attrs["class"] = "form-select"
+        self.fields["sort"].widget.attrs.update(
+            {"class": "form-select", "onchange": "this.form.submit()"}
+        )
         self.fields["min_price"].widget.attrs.update({"class": "form-control", "placeholder": "Min ৳"})
         self.fields["max_price"].widget.attrs.update({"class": "form-control", "placeholder": "Max ৳"})
 
@@ -67,3 +85,8 @@ class ProductFilterForm(forms.Form):
             products = products.filter(price__lte=data["max_price"])
 
         return products
+
+    def sort_products(self, products):
+        """Order the products. Call this only when the form is valid."""
+        key = self.cleaned_data.get("sort") or ""
+        return products.order_by(*SORT_ORDERING[key])

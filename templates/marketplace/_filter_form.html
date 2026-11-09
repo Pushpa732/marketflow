@@ -3,25 +3,32 @@
     <input type="hidden" name="q" value="{{ query }}">
   {% endif %}
 
-  <div class="row g-2 align-items-end">
-    <div class="col-md-3">
+  <div class="row g-2">
+    <div class="col-md-4">
       <label class="form-label small mb-1" for="{{ filter_form.category.id_for_label }}">Category</label>
       {{ filter_form.category }}
     </div>
-    <div class="col-md-3">
+    <div class="col-md-4">
       <label class="form-label small mb-1" for="{{ filter_form.shop.id_for_label }}">Shop</label>
       {{ filter_form.shop }}
     </div>
-    <div class="col-6 col-md-2">
+    <div class="col-md-4">
+      <label class="form-label small mb-1" for="{{ filter_form.sort.id_for_label }}">Sort by</label>
+      {{ filter_form.sort }}
+    </div>
+  </div>
+
+  <div class="row g-2 mt-1 align-items-end">
+    <div class="col-6 col-md-3">
       <label class="form-label small mb-1" for="{{ filter_form.min_price.id_for_label }}">Min price</label>
       {{ filter_form.min_price }}
     </div>
-    <div class="col-6 col-md-2">
+    <div class="col-6 col-md-3">
       <label class="form-label small mb-1" for="{{ filter_form.max_price.id_for_label }}">Max price</label>
       {{ filter_form.max_price }}
     </div>
-    <div class="col-md-2 d-flex gap-2">
-      <button type="submit" class="btn btn-primary w-100">Apply</button>
+    <div class="col-md-6 d-flex gap-2 justify-content-md-end">
+      <button type="submit" class="btn btn-primary">Apply</button>
       {% if query %}
         <a href="{{ action_url }}?q={{ query|urlencode }}" class="btn btn-outline-secondary">Reset</a>
       {% else %}

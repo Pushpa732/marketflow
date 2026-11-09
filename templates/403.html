@@ -1,11 +1,12 @@
 {% extends "base.html" %}
 
-{% block title %}Access Denied | MarketFlow{% endblock %}
+{% block title %}Page Not Found | MarketFlow{% endblock %}
 
 {% block content %}
 <div class="text-center py-5">
-  <h1 class="display-6">Access Denied</h1>
-  <p class="lead">You do not have permission to view this page.</p>
+  <h1 class="display-4">404</h1>
+  <p class="lead">Sorry, we could not find that page. The product or shop may have been removed or may not be available.</p>
   <a href="{% url 'marketplace:home' %}" class="btn btn-primary">Back to Home</a>
+  <a href="{% url 'marketplace:product_list' %}" class="btn btn-outline-secondary">Browse products</a>
 </div>
 {% endblock %}
