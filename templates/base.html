@@ -26,6 +26,9 @@
         </form>
 
         <div class="navbar-nav align-items-lg-center">
+                    <a class="nav-link" href="{% url 'cart:detail' %}">
+            Cart <span class="badge bg-warning text-dark">{{ cart_count }}</span>
+          </a>
           {% if user.is_authenticated %}
             {% if user.is_seller %}
               <a class="nav-link" href="{% url 'shops:seller_dashboard' %}">Dashboard</a>

@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}Your Cart | MarketFlow{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Your cart</h2>
+
+{% if groups %}
+  {% for group in groups %}
+    <div class="card mb-4">
+      <div class="card-header">
+        Items from
+        <a href="{% url 'marketplace:shop_detail' group.shop.slug %}" class="fw-bold text-decoration-none">{{ group.shop.name }}</a>
+      </div>
+      <div class="table-responsive">
+        <table class="table align-middle mb-0">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Price</th>
+              <th style="width:200px;">Quantity</th>
+              <th>Total</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for line in group.lines %}
+              <tr>
+                <td>
+                  <div class="d-flex align-items-center">
+                    {% with img=line.product.main_image %}
+                      {% if img %}
+                        <img src="{{ img.image.url }}" alt="" class="rounded me-2" style="width:48px;height:48px;object-fit:cover;">
+                      {% endif %}
+                    {% endwith %}
+                    <a href="{% url 'marketplace:product_detail' line.product.slug %}" class="text-decoration-none">{{ line.product.name }}</a>
+                  </div>
+                </td>
+                <td>৳ {{ line.unit_price }}</td>
+                <td>
+                  <form method="post" action="{% url 'cart:update' line.product.pk %}" class="d-flex gap-2">
+                    {% csrf_token %}
+                    <input type="number" name="quantity" value="{{ line.quantity }}" min="0" max="{{ line.product.stock }}" class="form-control form-control-sm" style="width:80px;">
+                    <button type="submit" class="btn btn-outline-primary btn-sm">Update</button>
+                  </form>
+                </td>
+                <td>৳ {{ line.line_total }}</td>
+                <td>
+                  <form method="post" action="{% url 'cart:remove' line.product.pk %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-danger btn-sm">Remove</button>
+                  </form>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <div class="card-footer text-end">
+        Subtotal for {{ group.shop.name }}: <strong>৳ {{ group.subtotal }}</strong>
+      </div>
+    </div>
+  {% endfor %}
+
+  <div class="d-flex justify-content-between align-items-center">
+    <div>
+      <p class="mb-0 fs-5">Items total: <strong>৳ {{ total }}</strong></p>
+      <p class="text-muted small mb-0">Delivery charges are added at checkout.</p>
+    </div>
+    <div class="d-flex gap-2">
+      <a href="{% url 'marketplace:product_list' %}" class="btn btn-outline-secondary">Continue shopping</a>
+      <button type="button" class="btn btn-primary" disabled>Checkout (coming soon)</button>
+    </div>
+  </div>
+
+{% else %}
+  <div class="alert alert-info">
+    Your cart is empty. <a href="{% url 'marketplace:product_list' %}" class="alert-link">Browse products</a> to get started.
+  </div>
+{% endif %}
+{% endblock %}
