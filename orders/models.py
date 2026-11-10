@@ -98,6 +98,8 @@ class OrderItem(models.Model):
 
     @property
     def line_total(self):
+        if self.unit_price is None or self.quantity is None:
+            return Decimal("0.00")
         return self.unit_price * self.quantity
 
     def __str__(self):
