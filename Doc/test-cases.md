@@ -65,3 +65,19 @@
 | TC-45 | Sorting | FR-C3 | Choose each sort option | Products in the correct order | As expected | Pass |
 | TC-46 | Pagination keeps choices | NFR-5 | Sort, then go to page 2 | Sort and filters stay on page 2 | As expected | Pass |
 | TC-47 | Friendly 404 page | NFR-7 | Open a page that does not exist (with DEBUG off) | Friendly 404 page with buttons | As expected | Pass |
+
+## Phase 5: Shopping Cart
+
+| ID | Scenario | Related Req. | Steps | Expected Result | Actual Result | Status |
+|---|---|---|---|---|---|---|
+| TC-48 | Add to cart without logging in | FR-C6 | Log out, open a product, click Add to cart | Item appears in the cart, navbar count updates | As expected | Pass |
+| TC-49 | Add the same product twice | FR-C6 | Add a product, then add it again | Quantity increases, no duplicate line | As expected | Pass |
+| TC-50 | Cart with two shops | FR-C6, FR-C10 | Add products from two shops | Items grouped by shop, each shop has a subtotal, total is correct | As expected | Pass |
+| TC-51 | Update and remove | FR-C6 | Change a quantity, set 0, click Remove | Totals update, items disappear | As expected | Pass |
+| TC-52 | Quantity above stock | NFR-10 | Add more than the stock | Quantity limited to stock, warning shown | As expected | Pass |
+| TC-53 | Unavailable product | FR-C13 | Try to add an out-of-stock, draft, or draft-shop product | Not added (message or 404) | As expected | Pass |
+| TC-54 | Invalid quantity | NFR-7 | Send abc, -3, 0, or 1000 as quantity | Rejected with a clear message | As expected | Pass |
+| TC-55 | Price tampering | NFR-10 | Send a fake price with the add request | Fake price ignored, real price used | As expected | Pass |
+| TC-56 | Product changes after adding | NFR-10 | Seller unpublishes, changes price, or sells out a product in a cart | Cart shows current data and explains any removal | As expected | Pass |
+| TC-57 | Login keeps the cart | FR-C7 | Fill the cart as a visitor, then log in | Cart is still there | As expected | Pass |
+| TC-58 | Cart privacy | NFR-2 | Open the cart in a second browser | Second visitor sees an empty cart | As expected | Pass |

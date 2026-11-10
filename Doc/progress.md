@@ -40,3 +40,11 @@
 - Search uses simple word matching. It does not rank by relevance or correct spelling mistakes. Database full-text search and AI interpretation are planned improvements.
 - Shop and product addresses use English letters and digits only, so names written in Bangla produce generic addresses such as "shop-2".
 - Cart, checkout, and orders are not built yet.
+
+## Update: Phase 5 (Cart and Checkout, in progress)
+
+- **Done:** session-based shopping cart (add, update, remove, items grouped by shop, server-side totals, cart count in the navigation bar).
+- **Design decision:** the cart is stored in the visitor's session instead of a database table, so customers can add items before logging in. The session is kept when the customer logs in. The `Cart` and `CartItem` tables in the first ER diagram are therefore not used. The ER diagram will be updated when the order tables are finished.
+- **Limitation:** a session cart belongs to one browser. A customer who changes device starts with an empty cart. A database cart is a possible future improvement.
+- **Rule:** prices, stock, and totals are always read from the database. The browser never sends a price.
+- **Planned:** delivery address, checkout page, orders and order items (price snapshot), one order per shop, payment records.
