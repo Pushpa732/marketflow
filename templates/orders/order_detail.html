@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Order {{ order.order_number }} | MarketFlow{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2 class="mb-0">Order {{ order.order_number }}</h2>
+  <span class="fs-5">{% include "orders/_status_badge.html" %}</span>
+</div>
+<p class="text-muted">
+  Placed on {{ order.created_at|date:"d M Y, H:i" }} from
+  {% if order.shop.is_published %}
+    <a href="{% url 'marketplace:shop_detail' order.shop.slug %}">{{ order.shop.name }}</a>
+  {% else %}
+    {{ order.shop.name }}
+  {% endif %}
+</p>
+
+<div class="row g-4">
+  <div class="col-lg-8">
+    <div class="card">
+      <div class="card-header">Items</div>
+      <div class="table-responsive">
+        <table class="table align-middle mb-0">
+          <thead>
+            <tr><th>Product</th><th>Price</th><th>Quantity</th><th>Total</th></tr>
+          </thead>
+          <tbody>
+            {% for item in order.items.all %}
+              <tr>
+                <td>{{ item.product_name }}</td>
+                <td>৳ {{ item.unit_price }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>৳ {{ item.line_total }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <div class="card-body border-top">
+        <div class="d-flex justify-content-between"><span>Items</span><span>৳ {{ order.subtotal }}</span></div>
+        <div class="d-flex justify-content-between">
+          <span>Delivery</span>
+          <span>{% if order.delivery_charge == 0 %}Free{% else %}৳ {{ order.delivery_charge }}{% endif %}</span>
+        </div>
+        <div class="d-flex justify-content-between fw-bold fs-5"><span>Total</span><span>৳ {{ order.total }}</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="card">
+      <div class="card-header">Delivery details</div>
+      <div class="card-body">
+        <p class="mb-1"><strong>{{ order.shipping_name }}</strong></p>
+        <p class="mb-1">{{ order.shipping_address }}</p>
+        <p class="mb-1">{{ order.shipping_city }}</p>
+        <p class="text-muted mb-0">Phone: {{ order.shipping_phone }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<a href="{% url 'orders:order_list' %}" class="btn btn-outline-secondary mt-4">Back to my orders</a>
+{% endblock %}

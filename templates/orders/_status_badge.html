@@ -1,0 +1,13 @@
+{% if order.status == "pending" %}
+  <span class="badge bg-warning text-dark">{{ order.get_status_display }}</span>
+{% elif order.status == "confirmed" %}
+  <span class="badge bg-info text-dark">{{ order.get_status_display }}</span>
+{% elif order.status == "processing" or order.status == "shipped" %}
+  <span class="badge bg-primary">{{ order.get_status_display }}</span>
+{% elif order.status == "completed" %}
+  <span class="badge bg-success">{{ order.get_status_display }}</span>
+{% elif order.status == "rejected" %}
+  <span class="badge bg-danger">{{ order.get_status_display }}</span>
+{% else %}
+  <span class="badge bg-secondary">{{ order.get_status_display }}</span>
+{% endif %}

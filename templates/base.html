@@ -33,7 +33,8 @@
             {% if user.is_seller %}
               <a class="nav-link" href="{% url 'shops:seller_dashboard' %}">Dashboard</a>
             {% endif %}
-                        {% if user.is_customer %}
+                       {% if user.is_customer %}
+              <a class="nav-link" href="{% url 'orders:order_list' %}">My orders</a>
               <a class="nav-link" href="{% url 'customers:address_list' %}">My addresses</a>
             {% endif %}
             <span class="navbar-text me-3">Hello, {{ user.username }}</span>

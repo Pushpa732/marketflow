@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}My Orders | MarketFlow{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">My orders</h2>
+
+{% if page_obj %}
+  <div class="table-responsive">
+    <table class="table table-striped align-middle">
+      <thead>
+        <tr>
+          <th>Order</th>
+          <th>Date</th>
+          <th>Shop</th>
+          <th>Items</th>
+          <th>Total</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for order in page_obj %}
+          <tr>
+            <td><a href="{% url 'orders:order_detail' order.order_number %}">{{ order.order_number }}</a></td>
+            <td>{{ order.created_at|date:"d M Y, H:i" }}</td>
+            <td>{{ order.shop.name }}</td>
+            <td>{{ order.items.all|length }}</td>
+            <td>৳ {{ order.total }}</td>
+            <td>{% include "orders/_status_badge.html" %}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% include "marketplace/_pagination.html" %}
+{% else %}
+  <div class="alert alert-info">
+    You have not placed any orders yet. <a href="{% url 'marketplace:product_list' %}" class="alert-link">Browse products</a>.
+  </div>
+{% endif %}
+{% endblock %}
