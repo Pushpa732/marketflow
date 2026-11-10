@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}My Addresses | MarketFlow{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2 class="mb-0">My addresses</h2>
+  <a href="{% url 'customers:address_create' %}" class="btn btn-primary">Add address</a>
+</div>
+<p class="text-muted">You can save up to {{ max_addresses }} addresses.</p>
+
+{% if addresses %}
+  <div class="row g-3">
+    {% for address in addresses %}
+      <div class="col-md-6">
+        <div class="card h-100">
+          <div class="card-body">
+            <h5 class="card-title">
+              {{ address.full_name }}
+              {% if address.is_default %}
+                <span class="badge bg-success">Default</span>
+              {% endif %}
+            </h5>
+            <p class="mb-1">{{ address.address_line }}</p>
+            <p class="mb-1">{{ address.city }}</p>
+            <p class="text-muted mb-0">Phone: {{ address.phone }}</p>
+          </div>
+          <div class="card-footer d-flex gap-2">
+            <a href="{% url 'customers:address_edit' address.pk %}" class="btn btn-outline-primary btn-sm">Edit</a>
+            <a href="{% url 'customers:address_delete' address.pk %}" class="btn btn-outline-danger btn-sm">Delete</a>
+            {% if not address.is_default %}
+              <form method="post" action="{% url 'customers:address_default' address.pk %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-secondary btn-sm">Make default</button>
+              </form>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="alert alert-info">You have no saved addresses yet. Click <strong>Add address</strong> to add one.</div>
+{% endif %}
+{% endblock %}
