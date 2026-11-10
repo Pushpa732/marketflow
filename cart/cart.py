@@ -101,13 +101,33 @@ class Cart:
         return lines
 
     def groups(self):
-        """Group the lines by shop, with a subtotal for each shop."""
+        """Group the lines by shop, with subtotal, delivery charge, and total for each shop."""
         grouped = {}
         for line in self.lines():
             shop = line["product"].shop
             group = grouped.setdefault(
-                shop.pk, {"shop": shop, "lines": [], "subtotal": Decimal("0")}
+                shop.pk,
+                {
+                    "shop": shop,
+                    "lines": [],
+                    "subtotal": Decimal("0"),
+                    "delivery_charge": shop.delivery_charge,
+                },
             )
             group["lines"].append(line)
             group["subtotal"] += line["line_total"]
+
+        for group in grouped.values():
+            group["total"] = group["subtotal"] + group["delivery_charge"]
         return list(grouped.values())
+
+
+def summarize(groups):
+    """Totals for the whole cart: items, delivery, and the grand total."""
+    items_total = sum((group["subtotal"] for group in groups), Decimal("0"))
+    delivery_total = sum((group["delivery_charge"] for group in groups), Decimal("0"))
+    return {
+        "items_total": items_total,
+        "delivery_total": delivery_total,
+        "grand_total": items_total + delivery_total,
+    }

@@ -1,11 +1,24 @@
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 
 from accounts.decorators import customer_required
 
 from .forms import AddressForm
 from .models import MAX_ADDRESSES_PER_USER, Address
+
+
+def _safe_next_url(request):
+    """Return the ?next= address only if it points to this website."""
+    next_url = request.GET.get("next", "")
+    if next_url and url_has_allowed_host_and_scheme(
+        next_url,
+        allowed_hosts={request.get_host()},
+        require_https=request.is_secure(),
+    ):
+        return next_url
+    return None
 
 
 @customer_required
@@ -33,7 +46,7 @@ def address_create(request):
             address.user = request.user
             address.save()
             messages.success(request, "Address saved.")
-            return redirect("customers:address_list")
+            return redirect(_safe_next_url(request) or "customers:address_list")
     else:
         form = AddressForm(
             initial={
@@ -54,7 +67,7 @@ def address_edit(request, pk):
         if form.is_valid():
             form.save()
             messages.success(request, "Address updated.")
-            return redirect("customers:address_list")
+            return redirect(_safe_next_url(request) or "customers:address_list")
     else:
         form = AddressForm(instance=address)
 

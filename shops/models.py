@@ -1,6 +1,10 @@
+from decimal import Decimal
+
 from django.conf import settings
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils.text import slugify
+
 
 class Shop(models.Model):
     owner = models.OneToOneField(
@@ -17,6 +21,13 @@ class Shop(models.Model):
     contact_phone = models.CharField(max_length=20, blank=True)
     contact_email = models.EmailField(blank=True)
     is_published = models.BooleanField(default=False)
+    delivery_charge = models.DecimalField(
+        max_digits=7,
+        decimal_places=2,
+        default=Decimal("60.00"),
+        validators=[MinValueValidator(Decimal("0")), MaxValueValidator(Decimal("5000"))],
+        help_text="Flat delivery charge for one order from this shop. Enter 0 for free delivery.",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):

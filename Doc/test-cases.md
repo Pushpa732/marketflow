@@ -81,3 +81,32 @@
 | TC-56 | Product changes after adding | NFR-10 | Seller unpublishes, changes price, or sells out a product in a cart | Cart shows current data and explains any removal | As expected | Pass |
 | TC-57 | Login keeps the cart | FR-C7 | Fill the cart as a visitor, then log in | Cart is still there | As expected | Pass |
 | TC-58 | Cart privacy | NFR-2 | Open the cart in a second browser | Second visitor sees an empty cart | As expected | Pass |
+
+## Phase 5: Delivery Addresses
+
+| ID | Scenario | Related Req. | Steps | Expected Result | Actual Result | Status |
+|---|---|---|---|---|---|---|
+| TC-59 | Customer adds an address | FR-C8 | Log in as customer, open My addresses, add an address | Address saved, shown in the list | As expected | Pass |
+| TC-60 | First address is default | FR-C8 | Add the first address, then a second | First is default, second is not | As expected | Pass |
+| TC-61 | Change the default | FR-C8 | Tick default on a new address, or click Make default | Only one address is default | As expected | Pass |
+| TC-62 | Invalid phone number | FR-C8, NFR-7 | Save an address with phone 12345 | Clear error, nothing saved | As expected | Pass |
+| TC-63 | Edit and delete own address | FR-C8 | Edit, then delete an address | Changes saved, deletion needs confirmation | As expected | Pass |
+| TC-64 | Address limit | NFR-7 | Try to add a sixth address | Blocked with a message | As expected | Pass |
+| TC-65 | Another customer's address | FR-C13 | Open another customer's address edit or delete address | 404 Not Found, data unchanged | As expected | Pass |
+| TC-66 | Seller opens address pages | NFR-2 | Log in as seller, open /my/addresses/ | Access Denied (403) | As expected | Pass |
+| TC-67 | Visitor opens address pages | NFR-2 | Log out, open /my/addresses/ | Redirected to login | As expected | Pass |
+
+## Phase 5: Checkout Page and Delivery Charges
+
+| ID | Scenario | Related Req. | Steps | Expected Result | Actual Result | Status |
+|---|---|---|---|---|---|---|
+| TC-68 | Visitor goes to checkout | FR-C7 | Log out, fill the cart, click Proceed to checkout | Redirected to login, then back to checkout with the cart intact | As expected | Pass |
+| TC-69 | Seller opens checkout | NFR-2 | Log in as seller, open /checkout/ | Redirected to cart with a message | As expected | Pass |
+| TC-70 | Checkout with empty cart | NFR-7 | Open /checkout/ with an empty cart | Redirected to cart with a message | As expected | Pass |
+| TC-71 | Delivery charge per shop | FR-C10, NFR-10 | Order from two shops with different charges | Each shop shows its own delivery charge and total, grand total is correct | As expected | Pass |
+| TC-72 | Free delivery | NFR-10 | Seller sets charge 0 | Delivery shown as Free | As expected | Pass |
+| TC-73 | Seller delivery charge validation | NFR-7 | Enter -5, 5001, or text as charge | Rejected with an error | As expected | Pass |
+| TC-74 | Address selection | FR-C8 | Open checkout with several saved addresses | Default address preselected, others selectable | As expected | Pass |
+| TC-75 | Another customer's address | FR-C13 | Add ?address= with another customer's address number | Ignored, default used, address never shown | As expected | Pass |
+| TC-76 | No saved address | FR-C8 | Open checkout without an address | Prompt to add one, then return to checkout | As expected | Pass |
+| TC-77 | Unsafe return address | NFR-3 | Open Add address with ?next=https://evil.example/ and save | Ignored, user stays on this website | As expected | Pass |
