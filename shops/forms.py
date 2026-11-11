@@ -1,9 +1,27 @@
 from django import forms
 
+from customers.forms import PhoneField
+from customers.models import phone_validator
+
 from .models import Shop
 
 
 class ShopForm(forms.ModelForm):
+    bkash_number = PhoneField(
+        required=False,
+        max_length=20,
+        validators=[phone_validator],
+        label="bKash number for payments (optional)",
+        help_text="Customers who choose bKash are asked to send money to this number.",
+    )
+    nagad_number = PhoneField(
+        required=False,
+        max_length=20,
+        validators=[phone_validator],
+        label="Nagad number for payments (optional)",
+        help_text="Customers who choose Nagad are asked to send money to this number.",
+    )
+
     class Meta:
         model = Shop
         fields = (
@@ -14,6 +32,8 @@ class ShopForm(forms.ModelForm):
             "contact_phone",
             "contact_email",
             "delivery_charge",
+            "bkash_number",
+            "nagad_number",
         )
         labels = {"delivery_charge": "Delivery charge per order (৳)"}
         widgets = {"description": forms.Textarea(attrs={"rows": 4})}

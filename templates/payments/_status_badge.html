@@ -1,0 +1,9 @@
+{% if payment.status == "paid" %}
+  <span class="badge bg-success">{{ payment.get_status_display }}</span>
+{% elif payment.status == "failed" %}
+  <span class="badge bg-danger">{{ payment.get_status_display }}</span>
+{% elif payment.status == "refunded" %}
+  <span class="badge bg-secondary">{{ payment.get_status_display }}</span>
+{% else %}
+  <span class="badge bg-warning text-dark">{{ payment.get_status_display }}</span>
+{% endif %}

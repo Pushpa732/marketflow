@@ -58,6 +58,67 @@
         <p class="text-muted mb-0">Phone: {{ order.shipping_phone }}</p>
       </div>
     </div>
+
+    {% if payment %}
+      <div class="card mt-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <span>Payment</span>
+          {% include "payments/_status_badge.html" %}
+        </div>
+        <div class="card-body">
+          <p class="mb-1">Method: <strong>{{ payment.get_method_display }}</strong></p>
+          <p class="mb-2">Amount: <strong>৳ {{ payment.amount }}</strong></p>
+
+          {% if payment.method == "cod" %}
+            <p class="small text-muted mb-0">Pay ৳ {{ payment.amount }} in cash when your order is delivered.</p>
+          {% elif payment.status == "paid" %}
+            <p class="small text-success mb-0">
+              Payment confirmed{% if payment.paid_at %} on {{ payment.paid_at|date:"d M Y" }}{% endif %}.
+            </p>
+          {% elif payment.status == "failed" %}
+            <p class="small text-danger mb-0">
+              {{ order.shop.name }} could not verify this payment.
+              {% if order.shop.contact_phone %}Please contact the shop on {{ order.shop.contact_phone }}.{% endif %}
+            </p>
+          {% elif payment.status == "refunded" %}
+            <p class="small text-muted mb-0">This payment was refunded.</p>
+          {% elif order.status == "rejected" or order.status == "cancelled" %}
+            <p class="small text-muted mb-0">This order is {{ order.get_status_display|lower }}, so no payment is needed.</p>
+          {% else %}
+            {% if payment_number %}
+              <p class="small">
+                1. Open {{ payment.get_method_display }} and send <strong>৳ {{ payment.amount }}</strong>
+                to <strong>{{ payment_number }}</strong>.<br>
+                2. Enter the transaction ID from your confirmation message below.
+              </p>
+            {% else %}
+              <p class="small">
+                Please contact {{ order.shop.name }} to arrange your {{ payment.get_method_display }} payment,
+                then enter the transaction ID below.
+              </p>
+            {% endif %}
+
+            {% if payment.transaction_id %}
+              <p class="small">
+                Transaction ID submitted: <strong>{{ payment.transaction_id }}</strong>.
+                {{ order.shop.name }} will check it.
+              </p>
+            {% endif %}
+
+            <form method="post" action="{% url 'payments:submit_transaction_id' order.order_number %}">
+              {% csrf_token %}
+              <div class="input-group input-group-sm">
+                <input type="text" name="transaction_id" class="form-control" placeholder="Transaction ID" maxlength="30" required autocomplete="off">
+                <button class="btn btn-primary" type="submit">{% if payment.transaction_id %}Update{% else %}Submit{% endif %}</button>
+              </div>
+            </form>
+            <p class="small text-muted mt-2 mb-0">
+              Never share your PIN or password with anyone. MarketFlow will never ask for it.
+            </p>
+          {% endif %}
+        </div>
+      </div>
+    {% endif %}
   </div>
 </div>
 

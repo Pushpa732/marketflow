@@ -45,3 +45,20 @@ Stock is checked when the order is placed and checked again when the seller conf
 - Deleting a product keeps old orders intact, because the order item keeps its own copy of the name and price.
 - The database refuses an order item with a quantity below 1.
 - Order numbers are random, so they cannot be guessed by counting.
+
+## Placing an Order
+
+When the customer clicks Place order, the server does the following inside one database transaction:
+
+1. Reads the cart and the current prices from the database. The browser never sends prices.
+2. Checks that the chosen address belongs to the logged-in customer.
+3. Locks the products and checks stock and availability again.
+4. Creates one Order per shop, with copied prices, delivery charge, and delivery address.
+5. Compares the grand total with the total the customer saw on the checkout page. If they differ (for example the seller changed a price a moment ago), everything is cancelled and the customer is asked to review the new total.
+
+If any step fails, nothing is saved. The cart is cleared only after all orders are saved.
+
+## Known Limitations
+
+- Stock is checked at placement but reduced only when the seller confirms, so two customers can place orders for the last item. The seller's confirmation checks stock again, and the second order cannot be confirmed.
+- Database row locking is applied on production databases such as PostgreSQL. The development database (SQLite) serializes writes by itself.

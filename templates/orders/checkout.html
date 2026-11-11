@@ -11,7 +11,7 @@
 
   <div class="row g-4">
     <div class="col-lg-7">
-      <div class="card">
+      <div class="card mb-4">
         <div class="card-header">1. Delivery address</div>
         <div class="card-body">
           {% if addresses %}
@@ -38,11 +38,32 @@
           {% endif %}
         </div>
       </div>
+
+      <div class="card">
+        <div class="card-header">2. Payment method</div>
+        <div class="card-body">
+          {% for option in payment_options %}
+            <div class="form-check mb-2">
+              <input class="form-check-input" type="radio" name="payment_method" id="pay_{{ option.value }}" value="{{ option.value }}" {% if option.value == selected_payment_method %}checked{% endif %} {% if not option.available %}disabled{% endif %}>
+              <label class="form-check-label" for="pay_{{ option.value }}">
+                {{ option.label }}
+                {% if not option.available %}
+                  <span class="text-muted small">(not accepted by {{ option.blocking_shops|join:", " }})</span>
+                {% endif %}
+              </label>
+            </div>
+          {% endfor %}
+          <p class="small text-muted mt-3 mb-0">
+            For bKash and Nagad, you send the money yourself and then enter the transaction ID on the order page.
+            MarketFlow never asks for your PIN, password, or card details.
+          </p>
+        </div>
+      </div>
     </div>
 
     <div class="col-lg-5">
       <div class="card">
-        <div class="card-header">2. Order summary</div>
+        <div class="card-header">3. Order summary</div>
         <div class="card-body">
           <p class="small text-muted">
             Your cart has items from {{ groups|length }} shop{{ groups|length|pluralize }},

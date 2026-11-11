@@ -5,6 +5,8 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils.text import slugify
 
+from customers.models import phone_validator
+
 
 class Shop(models.Model):
     owner = models.OneToOneField(
@@ -28,6 +30,18 @@ class Shop(models.Model):
         validators=[MinValueValidator(Decimal("0")), MaxValueValidator(Decimal("5000"))],
         help_text="Flat delivery charge for one order from this shop. Enter 0 for free delivery.",
     )
+    bkash_number = models.CharField(
+        max_length=20,
+        blank=True,
+        validators=[phone_validator],
+        help_text="Customers who choose bKash are asked to send money to this number.",
+    )
+    nagad_number = models.CharField(
+        max_length=20,
+        blank=True,
+        validators=[phone_validator],
+        help_text="Customers who choose Nagad are asked to send money to this number.",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
@@ -40,6 +54,16 @@ class Shop(models.Model):
                 counter += 1
             self.slug = slug
         super().save(*args, **kwargs)
+
+    def accepts_payment_method(self, method):
+        """Cash on delivery is always accepted. bKash and Nagad need a receiving number."""
+        if method == "cod":
+            return True
+        if method == "bkash":
+            return bool(self.bkash_number)
+        if method == "nagad":
+            return bool(self.nagad_number)
+        return False
 
     def __str__(self):
         return self.name

@@ -110,3 +110,21 @@
 | TC-75 | Another customer's address | FR-C13 | Add ?address= with another customer's address number | Ignored, default used, address never shown | As expected | Pass |
 | TC-76 | No saved address | FR-C8 | Open checkout without an address | Prompt to add one, then return to checkout | As expected | Pass |
 | TC-77 | Unsafe return address | NFR-3 | Open Add address with ?next=https://evil.example/ and save | Ignored, user stays on this website | As expected | Pass |
+
+## Phase 5: Placing Orders
+
+| ID | Scenario | Related Req. | Steps | Expected Result | Actual Result | Status |
+|---|---|---|---|---|---|---|
+| TC-78 | Place an order | FR-C9 | Customer with address clicks Place order | Order created as Pending, cart emptied | As expected | Pass |
+| TC-79 | Cart from two shops | FR-C10 | Order products from two shops | Two orders, each with only its own shop's items | As expected | Pass |
+| TC-80 | Prices and address copied | NFR-10 | Place an order, then change the product price and the saved address | Order keeps the old price and address | As expected | Pass |
+| TC-81 | Stock at placement | FR-S8 | Place an order | Stock is not reduced yet (reduced when the seller confirms) | As expected | Pass |
+| TC-82 | Price changes during checkout | NFR-10 | Seller changes a price while the customer is on checkout, then the customer clicks Place order | Order refused with a message, nothing saved | As expected | Pass |
+| TC-83 | Stock drops during checkout | NFR-10 | Lower stock below the cart quantity, then place the order | Order refused, cart corrected | As expected | Pass |
+| TC-84 | Another customer's address | FR-C13 | Send another customer's address number | Ignored, order refused | As expected | Pass |
+| TC-85 | Tampered totals | NFR-10 | Send fake price, subtotal, delivery, and total values | Ignored, real values used | As expected | Pass |
+| TC-86 | Failure in the middle | NFR-8 | Force an error while saving the second order | No order and no item saved | As expected | Pass |
+| TC-87 | Double submit | NFR-8 | Submit the checkout twice | Only one order created | As expected | Pass |
+| TC-88 | Order history | FR-C11 | Open My orders | Only the customer's own orders, newest first | As expected | Pass |
+| TC-89 | Another customer's order | FR-C13 | Open another customer's order address | 404 Not Found | As expected | Pass |
+| TC-90 | Visitor or seller places order | NFR-2 | Send the checkout form without a customer login | Redirected or refused, no order | As expected | Pass |

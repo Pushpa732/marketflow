@@ -3,6 +3,7 @@ from decimal import Decimal
 from django.db import transaction
 
 from catalog.models import Product
+from payments.models import Payment
 from shops.models import Shop
 
 from .models import Order, OrderItem
@@ -12,14 +13,18 @@ class OrderPlacementError(Exception):
     """Raised when the cart cannot be turned into orders."""
 
 
-def place_orders(*, customer, address, groups, expected_total):
-    """Turn the cart groups into one Order per shop. All orders are saved, or none.
+def place_orders(*, customer, address, groups, expected_total, payment_method):
+    """Turn the cart groups into one Order (with one Payment) per shop. All saved, or none.
 
     groups          the cart grouped by shop (from Cart.groups())
     expected_total  the grand total the customer saw on the checkout page
+    payment_method  "cod", "bkash", or "nagad"
     """
     if not groups:
         raise OrderPlacementError("Your cart is empty.")
+
+    if payment_method not in Payment.Method.values:
+        raise OrderPlacementError("Please choose a valid payment method.")
 
     with transaction.atomic():
         wanted = {}
@@ -58,6 +63,11 @@ def place_orders(*, customer, address, groups, expected_total):
                 raise OrderPlacementError(
                     "A shop in your cart is no longer available. Please review your cart."
                 )
+            if not shop.accepts_payment_method(payment_method):
+                method_name = Payment.Method(payment_method).label
+                raise OrderPlacementError(
+                    f"{shop.name} does not accept {method_name}. Please choose another payment method."
+                )
 
             lines = [
                 (products[line["product"].pk], line["quantity"]) for line in group["lines"]
@@ -88,6 +98,8 @@ def place_orders(*, customer, address, groups, expected_total):
                     for product, quantity in lines
                 ]
             )
+            Payment.objects.create(order=order, method=payment_method, amount=order.total)
+
             orders.append(order)
             grand_total += order.total
 
