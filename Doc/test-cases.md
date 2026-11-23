@@ -128,3 +128,26 @@
 | TC-88 | Order history | FR-C11 | Open My orders | Only the customer's own orders, newest first | As expected | Pass |
 | TC-89 | Another customer's order | FR-C13 | Open another customer's order address | 404 Not Found | As expected | Pass |
 | TC-90 | Visitor or seller places order | NFR-2 | Send the checkout form without a customer login | Redirected or refused, no order | As expected | Pass |
+
+## Phase 5: Payment Records
+
+| ID | Scenario | Related Req. | Steps | Expected Result | Actual Result | Status |
+|---|---|---|---|---|---|---|
+| TC-91 | Seller enters payment numbers | FR-S9 | Enter a bKash number in the shop profile | Saved, invalid numbers rejected | As expected | Pass |
+| TC-92 | Cash on delivery | FR-C9 | Place an order with Cash on delivery | Payment record created as Pending | As expected | Pass |
+| TC-93 | bKash order | FR-C9 | Place an order with bKash (shop has a number) | Payment created, order page shows seller's number and instructions | As expected | Pass |
+| TC-94 | Method not accepted | FR-C9 | Choose a method that a shop in the cart does not accept | Method disabled at checkout, refused if forced | As expected | Pass |
+| TC-95 | Submit transaction ID | FR-C9 | Enter a transaction ID on the order page | Saved in capital letters, payment stays Pending | As expected | Pass |
+| TC-96 | Invalid or reused transaction ID | NFR-7, NFR-10 | Enter a badly formatted ID, or an ID used by another order | Rejected with a clear message | As expected | Pass |
+| TC-97 | Payment kept separate | FR-S9 | Check an order with a pending payment | Order status and payment status are independent | As expected | Pass |
+| TC-98 | No sensitive payment data | NFR-1 | Check the checkout and order pages | No PIN, password, or card field anywhere | As expected | Pass |
+| TC-99 | Another customer's payment | FR-C13 | Submit an ID for another customer's order | 404 Not Found, nothing changed | As expected | Pass |
+| TC-100 | Payment ID locked | NFR-10 | Seller marks the payment, customer tries to change the ID | Change refused | As expected | Pass |
+
+## Phase 5: System Test
+
+| ID | Scenario | Related Req. | Steps | Expected Result | Actual Result | Status |
+|---|---|---|---|---|---|---|
+| TC-101 | Complete journey | FR-01 to FR-43 | Seller sets up shop and product; visitor browses, searches, filters; registers; adds address; orders with bKash; submits transaction ID | Order and payment created with correct totals, cart emptied, stock unchanged, order page shows the transaction ID | As expected | Pass |
+| TC-102 | Order privacy in the journey | FR-34, NFR-06 | Another customer and the seller open the customer's order page | 404 for the other customer, 403 for the seller | As expected | Pass |
+| TC-103 | Price snapshot in the journey | FR-32, NFR-07 | Seller changes the price after the order | The order keeps the old price | As expected | Pass |

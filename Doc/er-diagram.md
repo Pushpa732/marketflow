@@ -1,25 +1,20 @@
 # ER Diagram: MarketFlow
 
+This diagram shows the database tables that exist in the current version of the system.
+
 ```mermaid
 erDiagram
     USER ||--o| SHOP : owns
     USER ||--o{ ADDRESS : saves
-    USER ||--o| CART : has
     USER ||--o{ ORDER : places
-    USER ||--o{ REVIEW : writes
     SHOP ||--o{ PRODUCT : sells
     SHOP ||--o{ ORDER : receives
-    SHOP ||--o{ REVIEW : receives
     CATEGORY ||--o{ PRODUCT : groups
     CATEGORY ||--o{ CATEGORY : "parent of"
     PRODUCT ||--o{ PRODUCT_IMAGE : has
-    PRODUCT ||--o{ CART_ITEM : "added as"
     PRODUCT |o--o{ ORDER_ITEM : "sold as"
-    CART ||--o{ CART_ITEM : contains
     ORDER ||--|{ ORDER_ITEM : contains
     ORDER ||--o| PAYMENT : has
-    ORDER ||--o| DELIVERY : has
-    ORDER_ITEM ||--o| REVIEW : "reviewed in"
 
     USER {
         int id PK
@@ -40,6 +35,9 @@ erDiagram
         string contact_phone
         string contact_email
         boolean is_published
+        decimal delivery_charge
+        string bkash_number
+        string nagad_number
         datetime created_at
     }
     CATEGORY {
@@ -75,16 +73,8 @@ erDiagram
         string phone
         string address_line
         string city
-    }
-    CART {
-        int id PK
-        int user_id FK
-    }
-    CART_ITEM {
-        int id PK
-        int cart_id FK
-        int product_id FK
-        int quantity
+        boolean is_default
+        datetime created_at
     }
     ORDER {
         int id PK
@@ -92,6 +82,7 @@ erDiagram
         int customer_id FK
         int shop_id FK
         string status
+        decimal subtotal
         decimal delivery_charge
         decimal total
         string shipping_name
@@ -99,6 +90,7 @@ erDiagram
         string shipping_address
         string shipping_city
         datetime created_at
+        datetime updated_at
     }
     ORDER_ITEM {
         int id PK
@@ -113,15 +105,31 @@ erDiagram
         int order_id FK
         string method
         string status
-        string transaction_id
         decimal amount
+        string transaction_id
+        datetime paid_at
+        datetime created_at
+        datetime updated_at
     }
+```
+
+## Planned Tables
+
+These tables belong to later phases and do not exist yet.
+
+```mermaid
+erDiagram
+    ORDER ||--o| DELIVERY : has
+    ORDER_ITEM ||--o| REVIEW : "reviewed in"
+    USER ||--o{ REVIEW : writes
+    SHOP ||--o{ REVIEW : receives
+
     DELIVERY {
         int id PK
         int order_id FK
-        string status
         string courier
         string tracking_number
+        string status
         datetime updated_at
     }
     REVIEW {
@@ -135,12 +143,14 @@ erDiagram
     }
 ```
 
-## Implementation Status
+## Design Notes
 
-| Entity | Status |
+| Topic | Decision |
 |---|---|
-| User, Shop | Implemented |
-| Category, Product, ProductImage | Implemented |
-| Address, Cart, CartItem | Planned (Phase 5) |
-| Order, OrderItem, Payment, Delivery | Planned (Phases 5 and 6) |
-| Review | Planned (Phase 7) |
+| Shopping cart | Stored in the visitor's session, not in a table, so customers can shop before logging in |
+| Order snapshots | OrderItem keeps the product name and unit price; Order keeps the delivery charge, totals, and shipping details. Old orders never change when prices or addresses change. |
+| One order per shop | A cart with items from several shops creates one Order (with its own Payment) for each shop |
+| Separate statuses | Order status, payment status, and (planned) delivery status are stored separately |
+| Protected records | A customer or shop that has orders cannot be deleted (PROTECT) |
+| Product links | OrderItem.product is set to empty if a product is deleted; the copied name and price remain |
+| Payment | One Payment per Order. A transaction ID can be used only once per method. |

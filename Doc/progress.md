@@ -1,50 +1,119 @@
-# Project Progress: MarketFlow
+# Project Progress Report: MarketFlow
 
-## Module Status
+Project: Design and Development of a Multi-Vendor E-Commerce and Business Management Software System
+Prepared by: Sadia Tarannum Pushpa
+Status: Day 36 of 60 (Phase 5 complete)
 
-| Module | Status | Notes |
+## 1. Summary
+
+MarketFlow is a multi-vendor marketplace in which small businesses open online shops and customers buy from several shops in one checkout. The complete customer journey is now working: browsing, searching, filtering, cart, delivery address, checkout, order placement, and payment recording. The business owner can manage the shop, products, images, and bulk CSV import. The next phase gives business owners the tools to handle the orders they receive.
+
+## 2. Progress against the 60-Day Plan
+
+| Phase | Days | Status |
 |---|---|---|
-| User authentication and authorization | Done | Registration, login, logout, role-based access (customer, seller, administrator) |
-| Business and shop management | Done | Shop profile, logo upload, publish and unpublish |
-| Product and category management | Done | Add, edit, delete, up to 5 images, low-stock badge, CSV import with validation |
-| Marketplace and search | Done | Home page, product and shop listings, shop page, product page, keyword search, filters (category, shop, price), sorting, pagination |
-| Shopping cart and checkout | Planned | One order per shop at checkout |
-| Order management | Planned | Status workflow, stock deduction on confirmation |
-| Inventory management | Partly done | Stock field and low-stock alert done. Stock deduction planned with orders. |
-| Payment record management | Planned | Cash on delivery, bKash, Nagad (records only) |
-| Delivery and tracking | Planned | |
-| Reviews and ratings | Planned | Only for delivered purchases |
-| Reports and analytics | Planned | |
-| AI assistance | Planned | Product descriptions and interest-based discovery |
-| Administrator management | Done (basic) | Django Admin for users, shops, categories, products |
-| Testing | In progress | Automated tests for accounts, shops, catalog, CSV import, and marketplace |
+| 1. Analysis and design | 1 to 6 | Complete: requirements document, use case diagram, ER diagram, architecture |
+| 2. Accounts and shops | 7 to 13 | Complete |
+| 3. Catalog | 14 to 22 | Complete (products, images, CSV import) |
+| 4. Marketplace | 23 to 28 | Complete (listing, search, filters, sorting) |
+| 5. Cart and checkout | 29 to 36 | Complete (cart, addresses, checkout, orders, payment records) |
+| 6. Order management | 37 to 42 | Next |
+| 7. Reviews and reports | 43 to 47 | Planned |
+| 8. AI features | 48 to 51 | Planned |
+| 9. Testing and security | 52 to 55 | Planned |
+| 10. Deployment and documentation | 56 to 60 | Planned |
 
-## Design Decisions Made During Development
+## 3. What Has Been Built
 
-- One seller owns one shop (MVP simplification).
-- A seller's data is isolated on the server: every query filters by the logged-in seller's shop.
-- Product variants (such as size and color) are not part of the first version.
-- Administrator accounts cannot be created through public registration.
-- CSV import is all-or-nothing: if any row is invalid, nothing is saved, which prevents duplicates when the seller fixes and re-uploads the file.
-- CSV files cannot choose the shop; products always go to the logged-in seller's shop.
-- Customers see only published products of published shops. The rule is defined in one function and reused by every public page.
-- Search, filters, and sorting share one validated form, so invalid input gives a clear message instead of an error.
-- Every sort order has a tie-breaker so pagination never repeats or skips products.
-- Uploaded images are stored on the local file system during development.
+### 3.1 Accounts and access control
+- Registration as customer or business owner; the administrator role cannot be chosen at registration.
+- Login and logout with hashed passwords.
+- Role-based access: every protected page is checked on the server.
 
-## Known Limitations So Far
+### 3.2 Shops (business owners)
+- Shop profile with logo, description, category, and contact details.
+- Publish and unpublish; a description is required to publish.
+- Flat delivery charge per shop (0 to 5,000 BDT) and optional bKash and Nagad receiving numbers.
+- Each business owner can see and change only their own shop.
 
-- Uploaded images need persistent storage when deployed. Free hosting often deletes local files, so deployment will need a media storage plan.
-- Only CSV import is supported. Excel (.xlsx) import is left for future work.
-- CSV import does not upload product images. Images are added per product afterwards.
-- Search uses simple word matching. It does not rank by relevance or correct spelling mistakes. Database full-text search and AI interpretation are planned improvements.
-- Shop and product addresses use English letters and digits only, so names written in Bangla produce generic addresses such as "shop-2".
-- Cart, checkout, and orders are not built yet.
+### 3.3 Products
+- Add, edit, and delete products with price, stock, category, and low-stock level.
+- Up to five images per product, with type and size checks.
+- Draft and published states.
+- CSV import with a downloadable template; every row is checked, errors are reported by row number, and nothing is saved if any row is invalid.
 
-## Update: Phase 5 (Cart and Checkout, in progress)
+### 3.4 Marketplace (customers and visitors)
+- Home page, product list, shop list, shop pages, and product pages with image gallery.
+- Keyword search across products, shops, and categories.
+- Filters (category, shop, price range) and sorting, working together with search.
+- Draft products and draft shops are never visible to customers.
 
-- **Done:** session-based shopping cart (add, update, remove, items grouped by shop, server-side totals, cart count in the navigation bar).
-- **Design decision:** the cart is stored in the visitor's session instead of a database table, so customers can add items before logging in. The session is kept when the customer logs in. The `Cart` and `CartItem` tables in the first ER diagram are therefore not used. The ER diagram will be updated when the order tables are finished.
-- **Limitation:** a session cart belongs to one browser. A customer who changes device starts with an empty cart. A database cart is a possible future improvement.
-- **Rule:** prices, stock, and totals are always read from the database. The browser never sends a price.
-- **Planned:** delivery address, checkout page, orders and order items (price snapshot), one order per shop, payment records.
+### 3.5 Cart, addresses, checkout
+- Session-based cart that works before login and survives login.
+- Items grouped by shop; item totals, delivery charges, and grand total calculated on the server.
+- Up to five saved delivery addresses with Bangladesh mobile number validation.
+- Checkout with address selection and payment method selection.
+
+### 3.6 Orders
+- One order per shop is created from a multi-shop cart, all inside one database transaction (all saved or none).
+- Orders keep copies of prices, names, delivery charge, totals, and the delivery address.
+- Stock and total are checked again at the moment of ordering; if a seller changes a price during checkout, the order is refused and the customer reviews the new total.
+- Customers can view their order history and order details; other customers' orders are not accessible.
+
+### 3.7 Payments
+- One payment record per order: cash on delivery, bKash, or Nagad, with status pending, paid, failed, or refunded.
+- For bKash and Nagad the customer sees the seller's number and submits the transaction ID; each ID can be used only once per method.
+- The system never asks for or stores PINs, passwords, or card details.
+
+### 3.8 Administration
+- Django Admin for users, shops, categories, products, orders, and payments.
+
+## 4. Quality and Security
+
+| Area | What was done |
+|---|---|
+| Automated tests | A large automated test suite covers accounts, shops, catalog, CSV import, marketplace, cart, addresses, checkout, orders, and payments, including a complete customer journey test |
+| Test cases | A test case document traces test cases to requirement IDs |
+| Seller data isolation | Every seller query is filtered by the logged-in seller's shop |
+| Customer privacy | Orders and addresses are filtered by the logged-in customer |
+| Server-side calculation | Prices, stock checks, delivery charges, and totals are never taken from the browser |
+| Input safety | Forms validated on the server; text is escaped on pages; CSRF protection on all forms |
+| Secrets | Secret key and settings kept in environment variables, not in the repository |
+
+## 5. Documents Produced
+
+- Software Requirements Specification (functional and non-functional requirements)
+- Use case diagram, ER diagram, architecture document
+- Test case document
+- Order design and payment design documents
+- Requirements Analysis Document (in preparation)
+
+## 6. Key Design Decisions
+
+- One seller owns one shop, and one order belongs to one shop. This keeps seller permissions simple and secure.
+- The cart is stored in the session so customers can shop before registering.
+- Stock is checked when an order is placed and reduced only when the seller confirms it.
+- Order status, payment status, and delivery status are kept separate.
+- Payments are recorded, not processed, so no money or credentials are handled.
+- Product variants and Excel import were left out of the first version to protect the schedule.
+
+## 7. Not Yet Built
+
+| Feature | Planned phase |
+|---|---|
+| Business owner order list, confirm and reject, status workflow, stock reduction | Phase 6 |
+| Seller update of payment status and delivery details | Phase 6 |
+| Customer cancellation of pending orders | Phase 6 |
+| Reviews and ratings | Phase 7 |
+| Sales reports, best sellers, low-stock list | Phase 7 |
+| AI product description drafting and interest-based discovery | Phase 8 |
+| Security review and deployment | Phases 9 and 10 |
+
+## 8. Known Limitations
+
+- Uploaded images need persistent storage when deployed; free hosting often deletes local files.
+- A session cart belongs to one browser; a customer who changes device starts with an empty cart.
+- Search uses simple word matching; it does not rank results or correct spelling.
+- Two customers can place orders for the last item; the second order cannot be confirmed by the seller (stock is checked again at confirmation).
+- Transaction IDs are checked by the seller, not automatically; automatic verification needs a payment gateway agreement.
+- Names written in Bangla produce generic web addresses such as shop-2.
