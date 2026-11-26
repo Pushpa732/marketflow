@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Orders | MarketFlow{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2 class="mb-0">Orders for {{ shop.name }}</h2>
+  <a href="{% url 'shops:seller_dashboard' %}" class="btn btn-outline-secondary btn-sm">Back to dashboard</a>
+</div>
+
+<ul class="nav nav-pills mb-3">
+  {% for tab in tabs %}
+    <li class="nav-item">
+      <a class="nav-link {% if tab.value == active_status %}active{% endif %}" href="{{ tab.url }}">
+        {{ tab.label }} <span class="badge bg-light text-dark">{{ tab.count }}</span>
+      </a>
+    </li>
+  {% endfor %}
+</ul>
+
+<form method="get" class="row g-2 mb-3">
+  {% if active_status %}
+    <input type="hidden" name="status" value="{{ active_status }}">
+  {% endif %}
+  <div class="col-md-6">
+    <input type="search" name="q" value="{{ query }}" class="form-control" placeholder="Search by order number, customer name, or phone" maxlength="100">
+  </div>
+  <div class="col-auto">
+    <button class="btn btn-primary" type="submit">Search</button>
+    {% if query %}
+      <a href="{% if active_status %}?status={{ active_status }}{% else %}{{ request.path }}{% endif %}" class="btn btn-outline-secondary">Clear</a>
+    {% endif %}
+  </div>
+</form>
+
+{% if page_obj %}
+  <div class="table-responsive">
+    <table class="table table-striped align-middle">
+      <thead>
+        <tr>
+          <th>Order</th>
+          <th>Date</th>
+          <th>Customer</th>
+          <th>Items</th>
+          <th>Total</th>
+          <th>Payment</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for order in page_obj %}
+          <tr>
+            <td><a href="{% url 'orders:seller_order_detail' order.order_number %}">{{ order.order_number }}</a></td>
+            <td>{{ order.created_at|date:"d M Y, H:i" }}</td>
+            <td>
+              {{ order.shipping_name }}<br>
+              <span class="small text-muted">{{ order.shipping_phone }}</span>
+            </td>
+            <td>{{ order.items.all|length }}</td>
+            <td>৳ {{ order.total }}</td>
+            <td>
+              {% with payment=order.payment %}
+                {% if payment %}
+                  {{ payment.get_method_display }}
+                  {% include "payments/_status_badge.html" %}
+                {% else %}
+                  <span class="text-muted">-</span>
+                {% endif %}
+              {% endwith %}
+            </td>
+            <td>{% include "orders/_status_badge.html" %}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% include "marketplace/_pagination.html" %}
+{% else %}
+  {% if query or active_status %}
+    <div class="alert alert-info">No orders match your search or filter.</div>
+  {% else %}
+    <div class="alert alert-info">Your shop has no orders yet. They will appear here when customers order your products.</div>
+  {% endif %}
+{% endif %}
+{% endblock %}

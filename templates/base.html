@@ -32,6 +32,7 @@
           {% if user.is_authenticated %}
             {% if user.is_seller %}
               <a class="nav-link" href="{% url 'shops:seller_dashboard' %}">Dashboard</a>
+                            <a class="nav-link" href="{% url 'orders:seller_order_list' %}">Orders</a>
             {% endif %}
                        {% if user.is_customer %}
               <a class="nav-link" href="{% url 'orders:order_list' %}">My orders</a>

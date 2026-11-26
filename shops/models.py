@@ -65,5 +65,10 @@ class Shop(models.Model):
             return bool(self.nagad_number)
         return False
 
+    @property
+    def pending_order_count(self):
+        return self.orders.filter(status="pending").count()
+
+
     def __str__(self):
-        return self.name
+            return self.name
