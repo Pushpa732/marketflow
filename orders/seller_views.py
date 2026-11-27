@@ -4,14 +4,25 @@ from django.contrib import messages
 from django.core.paginator import Paginator
 from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.http import require_POST
 
 from accounts.decorators import seller_required
 from payments.models import Payment
+from payments.services import available_payment_actions
 from shops.models import Shop
 
 from .models import Order
+from .workflow import OrderTransitionError, apply_seller_action
 
 ORDERS_PER_PAGE = 10
+
+SUCCESS_MESSAGES = {
+    "confirm": "Order {number} confirmed. Your stock has been updated.",
+    "reject": "Order {number} rejected.",
+    "process": "Order {number} is now being processed.",
+    "ship": "Order {number} marked as shipped.",
+    "complete": "Order {number} marked as completed.",
+}
 
 
 def _seller_shop(user):
@@ -85,14 +96,45 @@ def seller_order_detail(request, order_number):
         return redirect("shops:shop_profile")
 
     # shop=shop is the privacy rule: orders of other shops give a 404.
-    order = get_object_or_404(
-        Order.objects.prefetch_related("items"),
-        order_number=order_number,
-        shop=shop,
-    )
+    order = get_object_or_404(Order, order_number=order_number, shop=shop)
+
+    item_rows = []
+    for item in order.items.select_related("product"):
+        stock = item.product.stock if item.product else None
+        item_rows.append(
+            {
+                "item": item,
+                "stock": stock,
+                "short": stock is None or stock < item.quantity,
+            }
+        )
+
     payment = Payment.objects.filter(order=order).first()
-    return render(
-        request,
-        "orders/seller_order_detail.html",
-        {"order": order, "payment": payment},
-    )
+    context = {
+        "order": order,
+        "item_rows": item_rows,
+        "payment": payment,
+        "payment_actions": available_payment_actions(payment, order) if payment else [],
+    }
+    return render(request, "orders/seller_order_detail.html", context)
+
+
+@seller_required
+@require_POST
+def seller_order_action(request, order_number):
+    shop = _seller_shop(request.user)
+    if shop is None:
+        messages.error(request, "Please create your shop before managing orders.")
+        return redirect("shops:shop_profile")
+
+    order = get_object_or_404(Order, order_number=order_number, shop=shop)
+    action = request.POST.get("action", "")
+
+    try:
+        updated = apply_seller_action(order.pk, shop, action)
+    except OrderTransitionError as error:
+        messages.error(request, str(error))
+    else:
+        messages.success(request, SUCCESS_MESSAGES[action].format(number=updated.order_number))
+
+    return redirect("orders:seller_order_detail", order_number=order.order_number)

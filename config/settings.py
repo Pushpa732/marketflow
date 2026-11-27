@@ -126,3 +126,9 @@ LOGOUT_REDIRECT_URL = "marketplace:home"
 from django.contrib.messages import constants as messages_constants
 
 MESSAGE_TAGS = {messages_constants.ERROR: "danger"}
+
+import sys
+
+# Faster password hashing, only while running tests. Never used on the real site.
+if "test" in sys.argv:
+    PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]

@@ -14,4 +14,9 @@ urlpatterns = [
         seller_views.seller_order_detail,
         name="seller_order_detail",
     ),
+    path(
+        "seller/orders/<slug:order_number>/action/",
+        seller_views.seller_order_action,
+        name="seller_order_action",
+    ),
 ]

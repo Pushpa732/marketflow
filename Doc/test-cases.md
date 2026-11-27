@@ -151,3 +151,50 @@
 | TC-101 | Complete journey | FR-01 to FR-43 | Seller sets up shop and product; visitor browses, searches, filters; registers; adds address; orders with bKash; submits transaction ID | Order and payment created with correct totals, cart emptied, stock unchanged, order page shows the transaction ID | As expected | Pass |
 | TC-102 | Order privacy in the journey | FR-34, NFR-06 | Another customer and the seller open the customer's order page | 404 for the other customer, 403 for the seller | As expected | Pass |
 | TC-103 | Price snapshot in the journey | FR-32, NFR-07 | Seller changes the price after the order | The order keeps the old price | As expected | Pass |
+
+## Phase 6: Seller Order List
+
+| ID | Scenario | Related Req. | Steps | Expected Result | Actual Result | Status |
+|---|---|---|---|---|---|---|
+| TC-104 | Seller sees own orders | FR-35 | Log in as seller, open Orders | Only the orders of the seller's shop, newest first | As expected | Pass |
+| TC-105 | Order isolation | FR-11, NFR-06 | Open another shop's order address | 404 Not Found, no customer data shown | As expected | Pass |
+| TC-106 | Status tabs and counts | FR-35 | Click each status tab | Correct orders and counts, other shops not counted | As expected | Pass |
+| TC-107 | Search orders | FR-35 | Search by order number, customer name, and phone | Matching orders of this shop only | As expected | Pass |
+| TC-108 | Invalid filter input | NFR-04 | Open ?status=hacker and a very long search | No crash, invalid status ignored | As expected | Pass |
+| TC-109 | Paging keeps the filter | NFR-12 | Filter by Pending with more than 10 orders, go to page 2 | Filter stays on page 2 | As expected | Pass |
+| TC-110 | Order details | FR-35 | Open an order | Items, delivery details, and payment shown | As expected | Pass |
+| TC-111 | Transaction ID visible | FR-41 | Open a bKash order whose customer submitted an ID | The seller sees the transaction ID | As expected | Pass |
+| TC-112 | Dashboard alert | FR-48 | Place a new order, open the dashboard | Alert with the number of pending orders | As expected | Pass |
+| TC-113 | Customer or visitor opens seller orders | NFR-02 | Open /seller/orders/ as customer, then logged out | Access Denied, then login page | As expected | Pass |
+
+## Phase 6: Order Workflow
+
+| ID | Scenario | Related Req. | Steps | Expected Result | Actual Result | Status |
+|---|---|---|---|---|---|---|
+| TC-114 | Confirm an order | FR-36, FR-37 | Seller confirms a pending order with enough stock | Status Confirmed, stock reduced by the ordered quantity | As expected | Pass |
+| TC-115 | Not enough stock | FR-37 | Seller confirms an order that needs more than the stock | Refused with the product named, status and stock unchanged | As expected | Pass |
+| TC-116 | All or nothing | NFR-08 | Confirm an order where only one of two items is short | No stock reduced for either item | As expected | Pass |
+| TC-117 | Reject an order | FR-36 | Seller rejects a pending order | Status Rejected, stock unchanged | As expected | Pass |
+| TC-118 | Double confirmation | FR-37 | Confirm the same order twice | Stock reduced only once | As expected | Pass |
+| TC-119 | Last item, two orders | FR-37 | Two orders need the last items; confirm both | First confirmed, second refused, stock never negative | As expected | Pass |
+| TC-120 | Status steps in order | FR-36 | Move an order from Confirmed to Completed | Each step works; skipping or repeating a step is refused | As expected | Pass |
+| TC-121 | Finished orders are locked | FR-36 | Try any action on a completed, rejected, or cancelled order | Refused, status unchanged | As expected | Pass |
+| TC-122 | Deleted product | FR-37 | Delete a product that is in a pending order, then confirm | Refused with an explanation | As expected | Pass |
+| TC-123 | Another seller's order | FR-11, NFR-06 | Another seller posts an action for the order | 404 Not Found, nothing changed | As expected | Pass |
+| TC-124 | Customer or visitor uses seller actions | NFR-02 | Send an action as a customer, then logged out | Access Denied, then login page | As expected | Pass |
+
+## Phase 6: Payment Status Actions
+
+| ID | Scenario | Related Req. | Steps | Expected Result | Actual Result | Status |
+|---|---|---|---|---|---|---|
+| TC-125 | Mark a verified payment as paid | FR-42 | bKash order with a transaction ID; seller clicks Mark as paid | Payment Paid, paid time recorded, order status unchanged | As expected | Pass |
+| TC-126 | Paid without a transaction ID | FR-42 | bKash or Nagad order without an ID | Mark as paid is disabled and refused if forced | As expected | Pass |
+| TC-127 | Cash on delivery before shipping | FR-42 | Try Mark as paid on a Pending, Confirmed, or Processing COD order | Refused with an explanation | As expected | Pass |
+| TC-128 | Cash on delivery after shipping | FR-42 | Ship the order, then Mark as paid | Payment Paid | As expected | Pass |
+| TC-129 | Failed and reopen | FR-42, FR-41 | Mark as failed, then Reopen | Customer cannot change the ID while failed, can after reopening | As expected | Pass |
+| TC-130 | Refund | FR-42 | Mark a paid payment as refunded | Status Refunded, paid time kept, no further actions | As expected | Pass |
+| TC-131 | Invalid payment steps | FR-42 | Try paid to failed, failed to paid, pending to refunded | Refused, status unchanged | As expected | Pass |
+| TC-132 | Rejected or cancelled order | FR-42 | Mark paid or reopen a payment of a rejected order | Refused; failed and refund still possible | As expected | Pass |
+| TC-133 | Separate statuses | FR-40 | Change the payment status of a confirmed order | Order status does not change | As expected | Pass |
+| TC-134 | Another seller's payment | FR-11, NFR-06 | Another seller posts a payment action | 404 Not Found, nothing changed | As expected | Pass |
+| TC-135 | Customer or visitor uses payment actions | NFR-02 | Send an action as a customer, then logged out | Access Denied, then login page | As expected | Pass |
